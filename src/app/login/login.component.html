@@ -1,36 +1,36 @@
 <section class="relative isolate flex min-h-screen items-center overflow-hidden bg-slate-950 px-4 py-12 text-slate-50 sm:px-6 lg:px-8">
-  <div class="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_top,_rgba(14,165,233,0.2),_transparent_35%),radial-gradient(circle_at_bottom,_rgba(249,115,22,0.18),_transparent_30%),linear-gradient(135deg,_#020617,_#111827_45%,_#0f172a)]"></div>
-  <div class="absolute inset-0 -z-10 bg-[linear-gradient(rgba(148,163,184,0.08)_1px,transparent_1px),linear-gradient(90deg,rgba(148,163,184,0.08)_1px,transparent_1px)] bg-[size:72px_72px] [mask-image:radial-gradient(circle_at_center,black,transparent_80%)]"></div>
+  <div class="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_top,_rgba(132,204,22,0.22),_transparent_35%),radial-gradient(circle_at_bottom,_rgba(250,204,21,0.16),_transparent_28%),linear-gradient(135deg,_#0f172a,_#1f2937_45%,_#132a13)]"></div>
+  <div class="absolute inset-0 -z-10 bg-[linear-gradient(rgba(187,247,208,0.08)_1px,transparent_1px),linear-gradient(90deg,rgba(187,247,208,0.08)_1px,transparent_1px)] bg-[size:72px_72px] [mask-image:radial-gradient(circle_at_center,black,transparent_80%)]"></div>
 
   <div class="mx-auto grid w-full max-w-6xl gap-10 lg:grid-cols-[1.1fr_0.9fr] lg:items-center">
     <div class="space-y-8">
-      <div class="inline-flex items-center gap-2 rounded-full border border-sky-400/30 bg-sky-400/10 px-4 py-1 text-sm font-medium text-sky-200">
-        <span class="h-2 w-2 rounded-full bg-sky-300"></span>
-        IA Access Portal
+      <div class="inline-flex items-center gap-2 rounded-full border border-lime-300/30 bg-lime-300/10 px-4 py-1 text-sm font-medium text-lime-100">
+        <span class="h-2 w-2 rounded-full bg-lime-300"></span>
+        Portal Huerta Viva
       </div>
 
       <div class="space-y-4">
-        <p class="text-sm uppercase tracking-[0.35em] text-slate-400">Angular + Tailwind</p>
+        <p class="text-sm uppercase tracking-[0.35em] text-emerald-200/70">Acceso de productores</p>
         <h1 class="max-w-2xl text-4xl font-black tracking-tight text-white sm:text-5xl lg:text-6xl">
-          Accede al panel con una interfaz limpia, rápida y sin SCSS.
+          Entra a tu cuaderno de campo y gestiona la huerta desde un solo lugar.
         </h1>
         <p class="max-w-xl text-base leading-7 text-slate-300 sm:text-lg">
-          Toda la pantalla usa utilidades de Tailwind para mantener los estilos consistentes, fáciles de extender y sin hojas de estilo por componente.
+          Consulta siembras, tareas de riego, seguimiento de parcelas y recomendaciones del cultivo con tu cuenta autorizada de Google.
         </p>
       </div>
 
       <div class="grid gap-4 sm:grid-cols-3">
         <div class="rounded-2xl border border-white/10 bg-white/5 p-4 backdrop-blur">
-          <p class="text-2xl font-bold text-white">100%</p>
-          <p class="text-sm text-slate-300">Maquetado con utilidades</p>
+          <p class="text-2xl font-bold text-white">Parcelas</p>
+          <p class="text-sm text-slate-300">Controla cada bancal y cultivo activo</p>
         </div>
         <div class="rounded-2xl border border-white/10 bg-white/5 p-4 backdrop-blur">
-          <p class="text-2xl font-bold text-white">0</p>
-          <p class="text-sm text-slate-300">Componentes con `.scss`</p>
+          <p class="text-2xl font-bold text-white">Riegos</p>
+          <p class="text-sm text-slate-300">Sigue turnos, alertas y consumos</p>
         </div>
         <div class="rounded-2xl border border-white/10 bg-white/5 p-4 backdrop-blur">
-          <p class="text-2xl font-bold text-white">1 clic</p>
-          <p class="text-sm text-slate-300">Para entrar al dashboard</p>
+          <p class="text-2xl font-bold text-white">Cosechas</p>
+          <p class="text-sm text-slate-300">Prepara la campaña con datos centralizados</p>
         </div>
       </div>
     </div>
@@ -38,43 +38,45 @@
     <div class="mx-auto w-full max-w-md">
       <div class="rounded-3xl border border-white/10 bg-white/10 p-8 shadow-2xl shadow-slate-950/40 backdrop-blur-xl">
         <div class="mb-8 space-y-2">
-          <p class="text-sm font-medium uppercase tracking-[0.3em] text-orange-300">Login</p>
-          <h2 class="text-3xl font-bold text-white">Bienvenido de vuelta</h2>
-          <p class="text-sm text-slate-300">Introduce cualquier usuario y contraseña para continuar.</p>
+          <p class="text-sm font-medium uppercase tracking-[0.3em] text-amber-300">Acceso seguro</p>
+          <h2 class="text-3xl font-bold text-white">Área privada de la huerta</h2>
+          <p class="text-sm text-slate-300">Inicia sesión con Google para entrar al panel de cultivos y seguimiento diario.</p>
         </div>
 
-        <form class="space-y-5" (ngSubmit)="submit()">
-          <div class="space-y-2">
-            <label class="text-sm font-medium text-slate-200" for="username">Usuario</label>
-            <input
-              id="username"
-              name="username"
-              type="text"
-              [(ngModel)]="username"
-              class="w-full rounded-2xl border border-white/10 bg-slate-900/80 px-4 py-3 text-white outline-none ring-0 placeholder:text-slate-500 focus:border-sky-400 focus:bg-slate-900"
-              placeholder="javier"
-            />
-          </div>
-
-          <div class="space-y-2">
-            <label class="text-sm font-medium text-slate-200" for="password">Contraseña</label>
-            <input
-              id="password"
-              name="password"
-              type="password"
-              [(ngModel)]="password"
-              class="w-full rounded-2xl border border-white/10 bg-slate-900/80 px-4 py-3 text-white outline-none ring-0 placeholder:text-slate-500 focus:border-sky-400 focus:bg-slate-900"
-              placeholder="••••••••"
-            />
+        <div class="space-y-5">
+          <div class="rounded-2xl border border-emerald-200/10 bg-slate-900/70 p-4 text-sm leading-6 text-slate-300">
+            Accede con la cuenta del equipo para consultar campañas, registrar labores y revisar avisos del cultivo.
           </div>
 
           <button
-            type="submit"
-            class="inline-flex w-full items-center justify-center rounded-2xl bg-gradient-to-r from-sky-400 via-cyan-300 to-orange-300 px-4 py-3 text-sm font-bold uppercase tracking-[0.2em] text-slate-950 transition hover:scale-[1.01] hover:shadow-lg hover:shadow-sky-400/20 focus:outline-none"
+            type="button"
+            (click)="signInWithGoogle()"
+            [disabled]="isLoading || isGuestLoading"
+            class="inline-flex w-full items-center justify-center gap-3 rounded-2xl bg-gradient-to-r from-lime-300 via-emerald-300 to-amber-200 px-4 py-3 text-sm font-bold uppercase tracking-[0.2em] text-slate-950 transition hover:scale-[1.01] hover:shadow-lg hover:shadow-lime-400/20 focus:outline-none disabled:cursor-not-allowed disabled:opacity-70"
           >
-            Entrar al dashboard
+            <svg class="h-5 w-5" viewBox="0 0 24 24" aria-hidden="true">
+              <path fill="currentColor" d="M21.35 11.1h-9.17v2.98h5.26c-.23 1.5-1.74 4.4-5.26 4.4-3.17 0-5.75-2.63-5.75-5.88s2.58-5.88 5.75-5.88c1.8 0 3 .76 3.69 1.41l2.51-2.43C16.77 4.2 14.7 3.25 12.18 3.25 7.24 3.25 3.25 7.29 3.25 12.25s3.99 9 8.93 9c5.15 0 8.57-3.62 8.57-8.72 0-.59-.06-1.03-.14-1.43Z"/>
+            </svg>
+            {{ isLoading ? 'Conectando...' : 'Entrar con Google' }}
           </button>
-        </form>
+
+          <button
+            type="button"
+            (click)="signInAsGuest()"
+            [disabled]="isLoading || isGuestLoading"
+            class="inline-flex w-full items-center justify-center rounded-2xl border border-white/15 bg-white/5 px-4 py-3 text-sm font-semibold uppercase tracking-[0.18em] text-white transition hover:bg-white/10 focus:outline-none disabled:cursor-not-allowed disabled:opacity-70"
+          >
+            {{ isGuestLoading ? 'Abriendo acceso...' : 'Continuar como invitado' }}
+          </button>
+
+          <p *ngIf="errorMessage" class="rounded-2xl border border-red-400/20 bg-red-500/10 px-4 py-3 text-sm text-red-200">
+            {{ errorMessage }}
+          </p>
+
+          <p class="text-xs leading-6 text-slate-400">
+            Puedes entrar con Google o usar un acceso anónimo para revisar el portal sin asociar una cuenta del equipo.
+          </p>
+        </div>
       </div>
     </div>
   </div>

@@ -1,67 +1,90 @@
 <section class="min-h-screen bg-slate-950 px-4 py-10 text-slate-50 sm:px-6 lg:px-8">
   <div class="mx-auto flex max-w-6xl flex-col gap-8">
-    <header class="overflow-hidden rounded-3xl border border-white/10 bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 p-8 shadow-xl shadow-slate-950/30">
+    <header class="overflow-hidden rounded-3xl border border-white/10 bg-gradient-to-r from-slate-900 via-emerald-950 to-slate-900 p-8 shadow-xl shadow-slate-950/30">
       <div class="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
         <div class="space-y-3">
-          <p class="text-sm font-semibold uppercase tracking-[0.35em] text-sky-300">Dashboard</p>
-          <h1 class="text-4xl font-black tracking-tight text-white sm:text-5xl">Panel principal</h1>
+          <p class="text-sm font-semibold uppercase tracking-[0.35em] text-lime-300">Cuaderno de campo</p>
+          <h1 class="text-4xl font-black tracking-tight text-white sm:text-5xl">Panel principal de cultivos</h1>
           <p class="max-w-2xl text-base leading-7 text-slate-300">
-            Esta vista también se apoya completamente en Tailwind, con tarjetas, métricas y bloques visuales sin depender de ficheros `.scss`.
+            Desde aquí puedes coordinar siembras, revisar el estado de cada parcela y mantener a tu equipo alineado durante la campaña.
           </p>
         </div>
-        <div class="inline-flex rounded-full border border-emerald-400/30 bg-emerald-400/10 px-4 py-2 text-sm font-medium text-emerald-200">
-          Sesión iniciada correctamente
+        <div class="flex flex-col items-start gap-3 lg:items-end">
+          <div class="inline-flex rounded-full border border-emerald-400/30 bg-emerald-400/10 px-4 py-2 text-sm font-medium text-emerald-200">
+            Sesión iniciada correctamente
+          </div>
+          <button
+            type="button"
+            (click)="logout()"
+            class="rounded-2xl border border-white/15 px-4 py-2 text-sm font-semibold text-white transition hover:bg-white/10"
+          >
+            Cerrar sesión
+          </button>
         </div>
       </div>
     </header>
 
+    <section *ngIf="user$ | async as user" class="grid gap-5 lg:grid-cols-[1.2fr_0.8fr]">
+      <article class="rounded-3xl border border-white/10 bg-white/5 p-6 backdrop-blur">
+        <p class="text-sm uppercase tracking-[0.3em] text-slate-400">Cuenta activa</p>
+        <h2 class="mt-4 text-2xl font-bold text-white">{{ user.displayName || 'Usuario autenticado' }}</h2>
+        <p class="mt-2 text-sm text-slate-300">{{ user.email }}</p>
+      </article>
+
+      <article class="rounded-3xl border border-lime-300/20 bg-lime-300/10 p-6">
+        <p class="text-sm uppercase tracking-[0.3em] text-lime-100/80">Jornada de hoy</p>
+        <p class="mt-4 text-2xl font-bold text-white">Riego, revisión y cosecha</p>
+        <p class="mt-2 text-sm text-slate-200">Mantén el seguimiento del día y comparte incidencias con el equipo desde el portal.</p>
+      </article>
+    </section>
+
     <div class="grid gap-5 md:grid-cols-3">
       <article class="rounded-3xl border border-white/10 bg-white/5 p-6 backdrop-blur">
-        <p class="text-sm uppercase tracking-[0.3em] text-slate-400">Estado</p>
-        <p class="mt-4 text-3xl font-bold text-white">Activo</p>
-        <p class="mt-2 text-sm text-slate-300">La navegación y la capa visual están listas con Tailwind.</p>
+        <p class="text-sm uppercase tracking-[0.3em] text-slate-400">Siembras</p>
+        <p class="mt-4 text-3xl font-bold text-white">12</p>
+        <p class="mt-2 text-sm text-slate-300">Campañas activas repartidas entre huerta de verano e invernadero.</p>
       </article>
 
       <article class="rounded-3xl border border-white/10 bg-white/5 p-6 backdrop-blur">
-        <p class="text-sm uppercase tracking-[0.3em] text-slate-400">Estilos</p>
-        <p class="mt-4 text-3xl font-bold text-white">Utilidades</p>
-        <p class="mt-2 text-sm text-slate-300">Los componentes usan clases semánticas de diseño en la plantilla.</p>
+        <p class="text-sm uppercase tracking-[0.3em] text-slate-400">Riegos</p>
+        <p class="mt-4 text-3xl font-bold text-white">3</p>
+        <p class="mt-2 text-sm text-slate-300">Sectores pendientes de revisión antes del cierre de la jornada.</p>
       </article>
 
       <article class="rounded-3xl border border-white/10 bg-white/5 p-6 backdrop-blur">
-        <p class="text-sm uppercase tracking-[0.3em] text-slate-400">Migración</p>
-        <p class="mt-4 text-3xl font-bold text-white">Sin SCSS</p>
-        <p class="mt-2 text-sm text-slate-300">Se ha eliminado la dependencia de hojas por componente.</p>
+        <p class="text-sm uppercase tracking-[0.3em] text-slate-400">Cosecha</p>
+        <p class="mt-4 text-3xl font-bold text-white">420 kg</p>
+        <p class="mt-2 text-sm text-slate-300">Producción registrada esta semana entre tomate, lechuga y calabacín.</p>
       </article>
     </div>
 
     <div class="grid gap-5 lg:grid-cols-[1.3fr_0.7fr]">
       <article class="rounded-3xl border border-white/10 bg-slate-900/80 p-8">
         <div class="mb-6 flex items-center justify-between">
-          <h2 class="text-2xl font-bold text-white">Resumen visual</h2>
-          <span class="rounded-full bg-sky-400/10 px-3 py-1 text-xs font-semibold uppercase tracking-[0.2em] text-sky-300">Tailwind</span>
+          <h2 class="text-2xl font-bold text-white">Resumen operativo</h2>
+          <span class="rounded-full bg-lime-400/10 px-3 py-1 text-xs font-semibold uppercase tracking-[0.2em] text-lime-300">Huerta</span>
         </div>
         <div class="grid gap-4 sm:grid-cols-3">
           <div class="rounded-2xl bg-slate-800 p-5">
-            <p class="text-sm text-slate-400">Rutas</p>
+            <p class="text-sm text-slate-400">Parcelas</p>
+            <p class="mt-3 text-2xl font-bold text-white">8</p>
+          </div>
+          <div class="rounded-2xl bg-slate-800 p-5">
+            <p class="text-sm text-slate-400">Tareas abiertas</p>
+            <p class="mt-3 text-2xl font-bold text-white">17</p>
+          </div>
+          <div class="rounded-2xl bg-slate-800 p-5">
+            <p class="text-sm text-slate-400">Incidencias</p>
             <p class="mt-3 text-2xl font-bold text-white">2</p>
-          </div>
-          <div class="rounded-2xl bg-slate-800 p-5">
-            <p class="text-sm text-slate-400">Pantallas</p>
-            <p class="mt-3 text-2xl font-bold text-white">Login + Home</p>
-          </div>
-          <div class="rounded-2xl bg-slate-800 p-5">
-            <p class="text-sm text-slate-400">Tema</p>
-            <p class="mt-3 text-2xl font-bold text-white">Slate / Sky / Orange</p>
           </div>
         </div>
       </article>
 
-      <aside class="rounded-3xl border border-white/10 bg-gradient-to-br from-sky-400/15 to-orange-300/15 p-8">
-        <p class="text-sm font-semibold uppercase tracking-[0.3em] text-orange-200">Siguiente paso</p>
-        <h2 class="mt-3 text-2xl font-bold text-white">Escalar componentes</h2>
+      <aside class="rounded-3xl border border-white/10 bg-gradient-to-br from-lime-400/15 to-amber-300/15 p-8">
+        <p class="text-sm font-semibold uppercase tracking-[0.3em] text-amber-200">Siguiente paso</p>
+        <h2 class="mt-3 text-2xl font-bold text-white">Conectar datos agronómicos</h2>
         <p class="mt-3 text-sm leading-7 text-slate-200">
-          A partir de aquí ya puedes seguir creando vistas nuevas con Tailwind como sistema principal de estilos del proyecto.
+          Con la autenticación lista, el siguiente avance natural es enlazar parcelas, cultivos y registros reales desde tu backend o base de datos.
         </p>
       </aside>
     </div>
