@@ -34,11 +34,16 @@ chrome-profiler-events*.json
 /.sass-cache
 /connect.lock
 /coverage
+/test-results
 /libpeerconnection.log
 npm-debug.log
 yarn-error.log
 testem.log
 /typings
+.features-gen
+.angular
+*.feature.spec.js
+*.feature.d.ts
 
 # System Files
 .DS_Store
