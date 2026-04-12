@@ -13,9 +13,8 @@ export default defineConfig({
     timeout: 5000,
   },
   use: {
-    baseURL: 'http://localhost:4200',
+    baseURL: 'http://127.0.0.1:4200',
     browserName: 'chromium',
-    channel: 'chrome',
     headless: true,
     trace: 'on-first-retry',
   },
@@ -26,8 +25,8 @@ export default defineConfig({
     },
   ],
   webServer: {
-    command: 'npm start',
-    url: 'http://localhost:4200',
+    command: 'npx ng serve --host 127.0.0.1 --port 4200',
+    url: 'http://127.0.0.1:4200',
     reuseExistingServer: true,
     timeout: 120 * 1000,
   },

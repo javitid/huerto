@@ -16,8 +16,75 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  unit-tests:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run unit tests
+        run: npm run test:unit -- --watch=false
+
+  e2e-tests:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Inject Firebase config for development
+        env:
+          FIREBASE_API_KEY: ${{ secrets.FIREBASE_API_KEY }}
+          FIREBASE_AUTH_DOMAIN: ${{ secrets.FIREBASE_AUTH_DOMAIN }}
+          FIREBASE_PROJECT_ID: ${{ secrets.FIREBASE_PROJECT_ID }}
+          FIREBASE_APP_ID: ${{ secrets.FIREBASE_APP_ID }}
+          FIREBASE_MESSAGING_SENDER_ID: ${{ secrets.FIREBASE_MESSAGING_SENDER_ID }}
+          FIREBASE_STORAGE_BUCKET: ${{ secrets.FIREBASE_STORAGE_BUCKET }}
+        run: |
+          cat <<EOF > src/environments/environment.local.ts
+          export const environment = {
+            production: false,
+            firebase: {
+              apiKey: '${FIREBASE_API_KEY}',
+              authDomain: '${FIREBASE_AUTH_DOMAIN}',
+              projectId: '${FIREBASE_PROJECT_ID}',
+              appId: '${FIREBASE_APP_ID}',
+              messagingSenderId: '${FIREBASE_MESSAGING_SENDER_ID}',
+              storageBucket: '${FIREBASE_STORAGE_BUCKET}'
+            }
+          };
+          EOF
+
+      - name: Install Playwright browser
+        run: npx playwright install --with-deps chromium
+
+      - name: Run Playwright tests
+        run: npm run test:e2e
+
   build:
     runs-on: ubuntu-latest
+    needs:
+      - unit-tests
+      - e2e-tests
 
     steps:
       - name: Checkout repository

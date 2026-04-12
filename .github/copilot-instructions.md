@@ -24,6 +24,7 @@ When regenerating this project, preserve all of the following unless the user ex
 - Route protection for the dashboard using an Angular auth guard.
 - A local-only Firebase environment file ignored by git.
 - GitHub Pages deployment with Firebase production config injected from GitHub Secrets.
+- CI validation with Jest unit tests and Playwright E2E before deployment.
 - The same npm scripts, or equivalent scripts with the same behavior.
 - The same dependency categories and purpose.
 - A visually styled login page and dashboard using Tailwind utility classes in templates.
@@ -79,10 +80,10 @@ The project should look like this at a high level:
 - `src/environments/environment.local.ts` for real local Firebase config and ignored by git.
 - `src/environments/environment.local.example.ts` as the local template.
 - `.github/workflows/deploy-pages.yml` injecting Firebase config from GitHub Secrets before the production build.
+- `.github/workflows/deploy-pages.yml` running unit tests and Playwright before the deploy jobs.
 - `tailwind.config.js`
 - `postcss.config.js`
 - `jest.config.js`
-- `src/setup-jest.ts`
 - `playwright.config.ts`
 - `features/gherkin/login.feature`
 - `features/steps/login.steps.ts`
@@ -185,7 +186,12 @@ The repository is expected to support deployment to GitHub Pages using a GitHub 
 When regenerating the workflow:
 
 - Keep `.github/workflows/deploy-pages.yml`.
+- Run Jest unit tests before the build job.
+- Run Playwright end-to-end tests before the build job.
+- Do not allow the deploy stage to run unless tests pass.
 - Install dependencies with `npm ci`.
+- For Playwright in CI, install the required browser explicitly.
+- Before end-to-end tests, generate `src/environments/environment.local.ts` from GitHub Secrets so development config is available in CI.
 - Before the production build, generate `src/environments/environment.prod.ts` from GitHub Secrets.
 - Then run the production build.
 - Keep SPA fallback generation by copying `index.html` to `404.html`.
@@ -212,7 +218,9 @@ Important constraint:
 
 - Use Jest as the unit test runner.
 - Keep `jest.config.js` configured with `jest-preset-angular`.
-- Use `src/setup-jest.ts` for test environment setup.
+- Prefer the minimal Jest setup needed by the current builder configuration.
+- Do not add `setupFilesAfterEnv` that reinitializes Angular testing if the builder already handles it.
+- Avoid loading `src/test.ts` through the Jest TypeScript config because it duplicates Angular test environment setup.
 - Avoid having Jest execute generated Playwright-BDD output.
 - Preserve a basic `AppComponent` unit test as the initial smoke test when applicable.
 
@@ -224,6 +232,8 @@ Important constraint:
 - `playwright.config.ts` should derive `testDir` from `defineBddConfig(...)`.
 - `defineBddConfig(...)` should point to the separated Gherkin and step folders.
 - Playwright should run against the local Angular dev server.
+- Prefer a provider-independent E2E path for CI stability when possible, such as anonymous access instead of popup-based Google auth.
+- Avoid forcing a Chrome channel in Playwright config unless CI explicitly installs and uses it.
 - Login-related E2E flows should reflect the real auth-oriented UI, even if external auth providers are mocked or partially stubbed in tests.
 
 If tests are regenerated, keep the behavior equivalent to the current setup.
@@ -302,7 +312,6 @@ If any of these files are missing during regeneration, recreate them in the base
 - `tailwind.config.js`
 - `postcss.config.js`
 - `jest.config.js`
-- `src/setup-jest.ts`
 - `src/styles.scss`
 - `src/app/app.module.ts`
 - `src/app/app-routing.module.ts`

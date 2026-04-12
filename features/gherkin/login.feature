@@ -1,6 +1,6 @@
 Feature: Login
 
-  Scenario: Successful login
+  Scenario: Successful anonymous login
     Given I am on the login page
-    When I enter valid credentials
+    When I continue as guest
     Then I see the dashboard
