@@ -63,13 +63,13 @@ jobs:
 
       - name: Prepare SPA fallback
         run: |
-          cp dist/myapp/index.html dist/myapp/404.html
-          touch dist/myapp/.nojekyll
+          cp dist/huerto/index.html dist/huerto/404.html
+          touch dist/huerto/.nojekyll
 
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: dist/myapp
+          path: dist/huerto
 
   deploy:
     environment:
