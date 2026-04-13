@@ -11,12 +11,14 @@ import { AppComponent } from './app.component';
 import { LoginComponent } from './login/login.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { TranslatePipe } from './i18n/translate.pipe';
+import { LanguageSwitcherComponent } from './language-switcher/language-switcher.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     LoginComponent,
-    DashboardComponent
+    DashboardComponent,
+    LanguageSwitcherComponent
   ],
   imports: [
     BrowserModule,

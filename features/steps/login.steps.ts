@@ -13,7 +13,7 @@ When('I continue as guest', async ({ page }) => {
 
 When('I continue as guest using the keyboard', async ({ page }) => {
   await page.keyboard.press('Tab');
-  await expect(page.getByRole('combobox', { name: 'Idioma' })).toBeFocused();
+  await expect(page.getByRole('combobox', { name: 'Language selector' })).toBeFocused();
   await page.keyboard.press('Tab');
   await expect(page.getByRole('button', { name: 'Entrar con Google' })).toBeFocused();
   await page.keyboard.press('Tab');

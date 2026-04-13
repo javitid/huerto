@@ -141,6 +141,9 @@ This template uses both SCSS and Tailwind, but with a clear responsibility split
 - Use native interactive elements such as `button`, `a`, `input`, and `select` instead of clickable `div` or `span` elements.
 - Every clickable control must expose a clearly visible `:focus-visible` state with enough contrast against the background.
 - Keyboard users must be able to complete the core flows without requiring a mouse.
+- Centralize the shared color palette in `src/styles.scss` via global CSS variables instead of repeating raw color values across component styles.
+- Prefer Tailwind classes in templates over component-level SCSS for layout and most visual styling. Use component SCSS only for truly local exceptions.
+- If a third-party UI library like PrimeNG needs custom styling, prefer global styles in `src/styles.scss` so the palette and interaction design stay consistent in one place.
 
 ## Internationalization Rules
 

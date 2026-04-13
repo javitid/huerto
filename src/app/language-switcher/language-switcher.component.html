@@ -1,0 +1,35 @@
+<div class="pointer-events-none fixed right-4 top-4 z-50 sm:right-6 sm:top-6">
+  <div class="app-floating-panel pointer-events-auto inline-flex items-center">
+    <p-select
+      inputId="language-select"
+      [options]="languageOptions"
+      optionLabel="shortCode"
+      optionValue="code"
+      [ngModel]="selectedLanguage"
+      (ngModelChange)="setLanguage($event)"
+      appendTo="body"
+      ariaLabel="Language selector"
+      [focusOnHover]="false"
+      [checkmark]="true"
+      class="language-select w-[6.5rem]"
+    >
+      <ng-template #selectedItem let-option>
+        @if (option) {
+          <div class="flex items-center gap-2">
+            <span class="text-base leading-none">{{ option.flag }}</span>
+            <span class="text-xs font-black uppercase tracking-[0.24em] text-white">{{ option.shortCode }}</span>
+          </div>
+        }
+      </ng-template>
+      <ng-template #item let-option>
+        <div class="flex items-center gap-3 rounded-xl px-1 py-1">
+          <span class="text-lg leading-none">{{ option.flag }}</span>
+          <span class="text-sm font-semibold uppercase tracking-[0.22em] text-black">{{ option.shortCode }}</span>
+        </div>
+      </ng-template>
+      <ng-template #dropdownicon>
+        <i class="pi pi-angle-down text-xs text-slate-200"></i>
+      </ng-template>
+    </p-select>
+  </div>
+</div>
