@@ -12,13 +12,14 @@ This base should be treated as a general-purpose authenticated web app, not a do
 
 When regenerating this project, preserve all of the following unless the user explicitly asks otherwise:
 
-- Angular 18 application using NgModules, not a standalone-only architecture.
+- Angular 21 application using NgModules, not a standalone-only architecture.
 - TypeScript strict mode.
 - SCSS as the Angular component style format.
 - Tailwind CSS available and wired through the global `src/styles.scss`.
 - Jest for unit testing.
 - Playwright + `playwright-bdd` for end-to-end / acceptance testing.
 - A two-screen app with `login` and `dashboard` routes.
+- Runtime internationalization with Spanish and English available by default.
 - Firebase Authentication integrated in the frontend.
 - Google sign-in and anonymous sign-in available from the login screen.
 - Route protection for the dashboard using an Angular auth guard.
@@ -45,17 +46,23 @@ Do not silently replace any of these with alternatives such as:
 
 Use this stack as the default baseline:
 
-- `@angular/*` version family `18.2.x`
-- `typescript` `~5.4.5`
+- `@angular/*` version family `21.2.x`
+- `typescript` `~5.9.3`
 - `rxjs` `~7.8.0`
-- `zone.js` `~0.14.0`
+- `zone.js` `~0.15.1`
 - `firebase` `10.x`
-- `@angular/fire` `18.x`
-- `@angular-builders/jest`
-- `jest`
-- `jest-preset-angular`
+- Do not add `@angular/fire` unless the user explicitly asks for it. This base currently uses the Firebase JS SDK directly.
+- `@angular-builders/jest` `^21.x`
+- `jest` `^30.x`
+- `jest-preset-angular` `^16.x`
+- `jsdom` `^26.x`
+- `@types/jest` `^30.x`
 - `@playwright/test`
 - `playwright-bdd`
+- `primeng`
+- `primeicons`
+- `@angular/cdk`
+- `@primeuix/themes`
 - `tailwindcss` `^3.4.x`
 - `postcss`
 - `autoprefixer`
@@ -85,6 +92,9 @@ The project should look like this at a high level:
 - `postcss.config.js`
 - `jest.config.js`
 - `playwright.config.ts`
+- `src/app/i18n/`
+- `src/assets/i18n/es.json`
+- `src/assets/i18n/en.json`
 - `features/gherkin/login.feature`
 - `features/steps/login.steps.ts`
 
@@ -93,6 +103,12 @@ Prefer this routing table:
 - `/` redirects to `/login`
 - `/login` renders the login page
 - `/dashboard` renders the dashboard page and is protected by `AuthGuard`
+
+Routing strategy note:
+
+- Use Angular hash routing (`useHash: true`) for this repository.
+- Public URLs in the browser should therefore look like `/#/login` and `/#/dashboard`.
+- This is intentional to avoid GitHub Pages returning an HTTP 404 on direct navigation to SPA routes like `/login`, even if a client-side redirect later recovers.
 
 ## Feature Folder Convention
 
@@ -121,6 +137,19 @@ This template uses both SCSS and Tailwind, but with a clear responsibility split
 - Use Tailwind utility classes directly in Angular templates for most layout and visual styling.
 - Use component SCSS files only when a utility-first approach becomes awkward or when a local override is clearly cleaner.
 - Keep the visual design polished and intentional, but the copy should remain generic enough to serve as a reusable authenticated portal starter.
+- All interactive elements must be keyboard accessible by default.
+- Use native interactive elements such as `button`, `a`, `input`, and `select` instead of clickable `div` or `span` elements.
+- Every clickable control must expose a clearly visible `:focus-visible` state with enough contrast against the background.
+- Keyboard users must be able to complete the core flows without requiring a mouse.
+
+## Internationalization Rules
+
+- Keep runtime internationalization enabled for at least Spanish (`es`) and English (`en`).
+- Preserve a shared translation layer in `src/app/i18n/` instead of scattering copy decisions across components.
+- Store user-facing translations in language files under `src/assets/i18n/`, one JSON file per language.
+- Language selection should persist across reloads when practical.
+- New user-facing copy should be added through the translation layer, not hardcoded in only one language.
+- The global language selector should use PrimeNG and show compact options with flags plus short labels such as `🇪🇸 ES` and `🇺🇸 EN`.
 
 Do not switch the project to plain `css` when recreating it.
 Do not remove component `.scss` files from the base template.
@@ -134,9 +163,15 @@ When generating or regenerating `angular.json`, preserve these behaviors:
 - Global styles entry points to `src/styles.scss`.
 - Build and serve targets remain based on Angular CLI.
 - The app remains module-based with `AppModule`.
+- Do not add `defaultProject`; current Angular CLI versions warn on that legacy workspace property.
+- Router configuration should keep `useHash: true` for GitHub Pages compatibility.
 - Production build sets `baseHref` to `/huerto/` for GitHub Pages deployment in this repository.
 - Production build replaces `src/environments/environment.ts` with `src/environments/environment.prod.ts`.
 - Development build replaces `src/environments/environment.ts` with `src/environments/environment.local.ts`.
+- Jest test target uses `@angular-builders/jest:run` with:
+  - `config` set to `jest.config.js`
+  - `tsConfig` set to `tsconfig.spec.json`
+  - `zoneless` set to `false`
 
 ## Authentication Requirements
 
@@ -144,6 +179,7 @@ Authentication is part of the baseline project, not an optional enhancement.
 
 - Use Firebase Authentication in the frontend.
 - Implement the auth layer in `src/app/auth/auth.service.ts`.
+- Use the Firebase JS SDK directly from `firebase/*` imports unless the user explicitly asks for AngularFire.
 - Support Google sign-in via `signInWithPopup(...)`.
 - Support anonymous sign-in via `signInAnonymously(...)`.
 - Persist sessions in the browser using `browserLocalPersistence`.
@@ -196,6 +232,7 @@ When regenerating the workflow:
 - Then run the production build.
 - Keep SPA fallback generation by copying `index.html` to `404.html`.
 - Keep `.nojekyll` generation.
+- Even with SPA fallback, prefer hash routing in this repository so direct route access does not depend on a 404 fallback response from GitHub Pages.
 
 Expected GitHub repository secrets:
 
@@ -218,6 +255,7 @@ Important constraint:
 
 - Use Jest as the unit test runner.
 - Keep `jest.config.js` configured with `jest-preset-angular`.
+- Keep Angular testing on the zone-based path for this project. Do not silently migrate the app or tests to zoneless behavior unless the user asks for that change.
 - Prefer the minimal Jest setup needed by the current builder configuration.
 - Do not add `setupFilesAfterEnv` that reinitializes Angular testing if the builder already handles it.
 - Avoid loading `src/test.ts` through the Jest TypeScript config because it duplicates Angular test environment setup.
@@ -237,6 +275,13 @@ Important constraint:
 - Login-related E2E flows should reflect the real auth-oriented UI, even if external auth providers are mocked or partially stubbed in tests.
 
 If tests are regenerated, keep the behavior equivalent to the current setup.
+
+Before creating any commit, verify that both of these pass in the current workspace:
+
+- unit tests
+- Playwright end-to-end tests
+
+Do not create or propose a commit as ready if either suite is failing or has not been run.
 
 ## NPM Scripts Baseline
 
@@ -271,6 +316,7 @@ Expected meanings:
 The recreated base project should behave like this:
 
 - Opening the app lands on `/login`.
+- In deployed GitHub Pages URLs, that route is represented as `/#/login`.
 - The login page shows a polished Tailwind-based layout, not a placeholder form.
 - The login screen offers provider-based entry points such as `Entrar con Google` and `Continuar como invitado`.
 - Login actions call a real auth service instead of checking hardcoded credentials.
@@ -285,7 +331,7 @@ If exact copy is requested, preserve the current structure, auth flow, and visua
 
 When asked to recreate the project from scratch, follow this order:
 
-1. Create the Angular 18 app with SCSS support.
+1. Create the Angular 21 app with SCSS support.
 2. Set up NgModules and routing.
 3. Install and configure Tailwind, PostCSS, and Autoprefixer using `src/styles.scss`.
 4. Install and configure Jest.
@@ -296,7 +342,7 @@ When asked to recreate the project from scratch, follow this order:
 9. Restore the environment strategy with placeholders, local ignored config, and production secret injection.
 10. Restore the same npm scripts.
 11. Recreate the separated feature structure with Gherkin files in `features/gherkin/` and step code in `features/steps/`.
-12. Verify with build and unit tests.
+12. Verify with build, unit tests, and Playwright end-to-end tests.
 
 Do not stop after scaffolding the CLI app if the user asked to regenerate the whole base project.
 
@@ -354,6 +400,7 @@ Any recreated version of this project should:
 - build successfully
 - run locally with `npm start`
 - pass unit tests
+- pass Playwright end-to-end tests
 - preserve the same foundational dependencies
 - preserve the same initial app structure
 - preserve the authentication baseline

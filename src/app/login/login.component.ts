@@ -2,11 +2,13 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { filter, take } from 'rxjs';
 import { AuthService } from '../auth/auth.service';
+import { I18nService } from '../i18n/i18n.service';
 
 @Component({
-  selector: 'app-login',
-  templateUrl: './login.component.html',
-  styleUrls: ['./login.component.scss']
+    selector: 'app-login',
+    templateUrl: './login.component.html',
+    styleUrls: ['./login.component.scss'],
+    standalone: false
 })
 export class LoginComponent implements OnInit {
   isLoading = false;
@@ -15,7 +17,8 @@ export class LoginComponent implements OnInit {
 
   constructor(
     private router: Router,
-    private authService: AuthService
+    private authService: AuthService,
+    public i18n: I18nService
   ) { }
 
   ngOnInit(): void {
@@ -40,8 +43,8 @@ export class LoginComponent implements OnInit {
       await this.router.navigate(['/dashboard']);
     } catch (error) {
       this.errorMessage = error instanceof Error
-        ? error.message
-        : 'No se pudo iniciar sesión con Google. Inténtalo de nuevo.';
+        ? this.i18n.translate(error.message)
+        : this.i18n.translate('login.errors.google');
     } finally {
       this.isLoading = false;
     }
@@ -56,8 +59,8 @@ export class LoginComponent implements OnInit {
       await this.router.navigate(['/dashboard']);
     } catch (error) {
       this.errorMessage = error instanceof Error
-        ? error.message
-        : 'No se pudo iniciar la sesión como invitado. Inténtalo de nuevo.';
+        ? this.i18n.translate(error.message)
+        : this.i18n.translate('login.errors.guest');
     } finally {
       this.isGuestLoading = false;
     }

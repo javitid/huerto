@@ -1,3 +1,5 @@
+@import 'primeicons/primeicons.css';
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -11,4 +13,17 @@ body {
   margin: 0;
   font-family: "Inter", "Segoe UI", sans-serif;
   background: #020617;
+}
+
+button,
+a,
+input,
+select,
+textarea,
+[role="button"],
+[tabindex]:not([tabindex="-1"]) {
+  &:focus-visible {
+    outline: 3px solid #facc15;
+    outline-offset: 3px;
+  }
 }

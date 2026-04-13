@@ -42,7 +42,7 @@ export class AuthService {
 
   async signInWithGoogle(): Promise<User> {
     if (!this.auth) {
-      throw new Error('Configura Firebase en los archivos environment para habilitar el acceso con Google.');
+      throw new Error('auth.configGoogle');
     }
 
     await setPersistence(this.auth, browserLocalPersistence);
@@ -60,7 +60,7 @@ export class AuthService {
 
   async signInAsGuest(): Promise<User> {
     if (!this.auth) {
-      throw new Error('Configura Firebase en los archivos environment para habilitar el acceso anónimo.');
+      throw new Error('auth.configGuest');
     }
 
     await setPersistence(this.auth, browserLocalPersistence);

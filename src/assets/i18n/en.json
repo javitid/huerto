@@ -1,0 +1,69 @@
+{
+  "common": {
+    "appName": "Huerto",
+    "language": "Language",
+    "spanish": "Español",
+    "english": "English"
+  },
+  "login": {
+    "badge": "Huerta Viva Portal",
+    "eyebrow": "Grower access",
+    "title": "Access your field notebook and manage the orchard from one place.",
+    "description": "Check sowing plans, irrigation tasks, plot tracking, and crop recommendations with your authorized Google account.",
+    "stats": {
+      "plotsTitle": "Plots",
+      "plotsDescription": "Track every bed and active crop",
+      "irrigationTitle": "Irrigation",
+      "irrigationDescription": "Follow shifts, alerts, and consumption",
+      "harvestTitle": "Harvests",
+      "harvestDescription": "Prepare the season with centralized data"
+    },
+    "panelEyebrow": "Secure access",
+    "panelTitle": "Private orchard area",
+    "panelDescription": "Sign in with Google to access the crop dashboard and daily tracking.",
+    "panelInfo": "Use the team account to review campaigns, log work, and check crop alerts.",
+    "googleCta": "Continue with Google",
+    "googleLoading": "Connecting...",
+    "guestCta": "Continue as guest",
+    "guestLoading": "Opening access...",
+    "helpText": "You can sign in with Google or use anonymous access to explore the portal without linking a team account.",
+    "errors": {
+      "google": "Google sign-in could not be completed. Please try again.",
+      "guest": "Guest access could not be started. Please try again."
+    }
+  },
+  "dashboard": {
+    "eyebrow": "Field notebook",
+    "title": "Main crop dashboard",
+    "description": "From here you can coordinate sowing, review the status of each plot, and keep your team aligned throughout the season.",
+    "sessionOk": "Session started successfully",
+    "logout": "Sign out",
+    "activeAccount": "Active account",
+    "authenticatedUser": "Authenticated user",
+    "dayEyebrow": "Today",
+    "dayTitle": "Irrigation, review, and harvest",
+    "dayDescription": "Keep track of the day and share incidents with the team from the portal.",
+    "cards": {
+      "sowingTitle": "Sowing",
+      "sowingDescription": "Active campaigns across summer fields and greenhouse.",
+      "irrigationTitle": "Irrigation",
+      "irrigationDescription": "Sectors pending review before the end of the day.",
+      "harvestTitle": "Harvest",
+      "harvestDescription": "Production logged this week across tomatoes, lettuce, and zucchini."
+    },
+    "summaryTitle": "Operational summary",
+    "summaryBadge": "Orchard",
+    "summary": {
+      "plots": "Plots",
+      "openTasks": "Open tasks",
+      "incidents": "Incidents"
+    },
+    "nextStepEyebrow": "Next step",
+    "nextStepTitle": "Connect agronomic data",
+    "nextStepDescription": "With authentication in place, the natural next step is to connect real plots, crops, and records from your backend or database."
+  },
+  "auth": {
+    "configGoogle": "Configure Firebase in the environment files to enable Google sign-in.",
+    "configGuest": "Configure Firebase in the environment files to enable anonymous access."
+  }
+}

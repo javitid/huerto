@@ -1,0 +1,69 @@
+{
+  "common": {
+    "appName": "Huerto",
+    "language": "Idioma",
+    "spanish": "Español",
+    "english": "English"
+  },
+  "login": {
+    "badge": "Portal Huerta Viva",
+    "eyebrow": "Acceso de productores",
+    "title": "Entra a tu cuaderno de campo y gestiona la huerta desde un solo lugar.",
+    "description": "Consulta siembras, tareas de riego, seguimiento de parcelas y recomendaciones del cultivo con tu cuenta autorizada de Google.",
+    "stats": {
+      "plotsTitle": "Parcelas",
+      "plotsDescription": "Controla cada bancal y cultivo activo",
+      "irrigationTitle": "Riegos",
+      "irrigationDescription": "Sigue turnos, alertas y consumos",
+      "harvestTitle": "Cosechas",
+      "harvestDescription": "Prepara la campaña con datos centralizados"
+    },
+    "panelEyebrow": "Acceso seguro",
+    "panelTitle": "Área privada de la huerta",
+    "panelDescription": "Inicia sesión con Google para entrar al panel de cultivos y seguimiento diario.",
+    "panelInfo": "Accede con la cuenta del equipo para consultar campañas, registrar labores y revisar avisos del cultivo.",
+    "googleCta": "Entrar con Google",
+    "googleLoading": "Conectando...",
+    "guestCta": "Continuar como invitado",
+    "guestLoading": "Abriendo acceso...",
+    "helpText": "Puedes entrar con Google o usar un acceso anónimo para revisar el portal sin asociar una cuenta del equipo.",
+    "errors": {
+      "google": "No se pudo iniciar sesión con Google. Inténtalo de nuevo.",
+      "guest": "No se pudo iniciar la sesión como invitado. Inténtalo de nuevo."
+    }
+  },
+  "dashboard": {
+    "eyebrow": "Cuaderno de campo",
+    "title": "Panel principal de cultivos",
+    "description": "Desde aquí puedes coordinar siembras, revisar el estado de cada parcela y mantener a tu equipo alineado durante la campaña.",
+    "sessionOk": "Sesión iniciada correctamente",
+    "logout": "Cerrar sesión",
+    "activeAccount": "Cuenta activa",
+    "authenticatedUser": "Usuario autenticado",
+    "dayEyebrow": "Jornada de hoy",
+    "dayTitle": "Riego, revisión y cosecha",
+    "dayDescription": "Mantén el seguimiento del día y comparte incidencias con el equipo desde el portal.",
+    "cards": {
+      "sowingTitle": "Siembras",
+      "sowingDescription": "Campañas activas repartidas entre huerta de verano e invernadero.",
+      "irrigationTitle": "Riegos",
+      "irrigationDescription": "Sectores pendientes de revisión antes del cierre de la jornada.",
+      "harvestTitle": "Cosecha",
+      "harvestDescription": "Producción registrada esta semana entre tomate, lechuga y calabacín."
+    },
+    "summaryTitle": "Resumen operativo",
+    "summaryBadge": "Huerta",
+    "summary": {
+      "plots": "Parcelas",
+      "openTasks": "Tareas abiertas",
+      "incidents": "Incidencias"
+    },
+    "nextStepEyebrow": "Siguiente paso",
+    "nextStepTitle": "Conectar datos agronómicos",
+    "nextStepDescription": "Con la autenticación lista, el siguiente avance natural es enlazar parcelas, cultivos y registros reales desde tu backend o base de datos."
+  },
+  "auth": {
+    "configGoogle": "Configura Firebase en los archivos environment para habilitar el acceso con Google.",
+    "configGuest": "Configura Firebase en los archivos environment para habilitar el acceso anónimo."
+  }
+}

@@ -6,31 +6,31 @@
     <div class="space-y-8">
       <div class="inline-flex items-center gap-2 rounded-full border border-lime-300/30 bg-lime-300/10 px-4 py-1 text-sm font-medium text-lime-100">
         <span class="h-2 w-2 rounded-full bg-lime-300"></span>
-        Portal Huerta Viva
+        {{ 'login.badge' | t }}
       </div>
 
       <div class="space-y-4">
-        <p class="text-sm uppercase tracking-[0.35em] text-emerald-200/70">Acceso de productores</p>
+        <p class="text-sm uppercase tracking-[0.35em] text-emerald-200/70">{{ 'login.eyebrow' | t }}</p>
         <h1 class="max-w-2xl text-4xl font-black tracking-tight text-white sm:text-5xl lg:text-6xl">
-          Entra a tu cuaderno de campo y gestiona la huerta desde un solo lugar.
+          {{ 'login.title' | t }}
         </h1>
         <p class="max-w-xl text-base leading-7 text-slate-300 sm:text-lg">
-          Consulta siembras, tareas de riego, seguimiento de parcelas y recomendaciones del cultivo con tu cuenta autorizada de Google.
+          {{ 'login.description' | t }}
         </p>
       </div>
 
       <div class="grid gap-4 sm:grid-cols-3">
         <div class="rounded-2xl border border-white/10 bg-white/5 p-4 backdrop-blur">
-          <p class="text-2xl font-bold text-white">Parcelas</p>
-          <p class="text-sm text-slate-300">Controla cada bancal y cultivo activo</p>
+          <p class="text-2xl font-bold text-white">{{ 'login.stats.plotsTitle' | t }}</p>
+          <p class="text-sm text-slate-300">{{ 'login.stats.plotsDescription' | t }}</p>
         </div>
         <div class="rounded-2xl border border-white/10 bg-white/5 p-4 backdrop-blur">
-          <p class="text-2xl font-bold text-white">Riegos</p>
-          <p class="text-sm text-slate-300">Sigue turnos, alertas y consumos</p>
+          <p class="text-2xl font-bold text-white">{{ 'login.stats.irrigationTitle' | t }}</p>
+          <p class="text-sm text-slate-300">{{ 'login.stats.irrigationDescription' | t }}</p>
         </div>
         <div class="rounded-2xl border border-white/10 bg-white/5 p-4 backdrop-blur">
-          <p class="text-2xl font-bold text-white">Cosechas</p>
-          <p class="text-sm text-slate-300">Prepara la campaña con datos centralizados</p>
+          <p class="text-2xl font-bold text-white">{{ 'login.stats.harvestTitle' | t }}</p>
+          <p class="text-sm text-slate-300">{{ 'login.stats.harvestDescription' | t }}</p>
         </div>
       </div>
     </div>
@@ -38,43 +38,47 @@
     <div class="mx-auto w-full max-w-md">
       <div class="rounded-3xl border border-white/10 bg-white/10 p-8 shadow-2xl shadow-slate-950/40 backdrop-blur-xl">
         <div class="mb-8 space-y-2">
-          <p class="text-sm font-medium uppercase tracking-[0.3em] text-amber-300">Acceso seguro</p>
-          <h2 class="text-3xl font-bold text-white">Área privada de la huerta</h2>
-          <p class="text-sm text-slate-300">Inicia sesión con Google para entrar al panel de cultivos y seguimiento diario.</p>
+          <p class="text-sm font-medium uppercase tracking-[0.3em] text-amber-300">{{ 'login.panelEyebrow' | t }}</p>
+          <h2 class="text-3xl font-bold text-white">{{ 'login.panelTitle' | t }}</h2>
+          <p class="text-sm text-slate-300">{{ 'login.panelDescription' | t }}</p>
         </div>
 
         <div class="space-y-5">
           <div class="rounded-2xl border border-emerald-200/10 bg-slate-900/70 p-4 text-sm leading-6 text-slate-300">
-            Accede con la cuenta del equipo para consultar campañas, registrar labores y revisar avisos del cultivo.
+            {{ 'login.panelInfo' | t }}
           </div>
 
           <button
             type="button"
             (click)="signInWithGoogle()"
             [disabled]="isLoading || isGuestLoading"
-            class="inline-flex w-full items-center justify-center gap-3 rounded-2xl bg-gradient-to-r from-lime-300 via-emerald-300 to-amber-200 px-4 py-3 text-sm font-bold uppercase tracking-[0.2em] text-slate-950 transition hover:scale-[1.01] hover:shadow-lg hover:shadow-lime-400/20 focus:outline-none disabled:cursor-not-allowed disabled:opacity-70"
-          >
+            [attr.aria-busy]="isLoading ? 'true' : 'false'"
+            class="inline-flex w-full items-center justify-center gap-3 rounded-2xl bg-gradient-to-r from-lime-300 via-emerald-300 to-amber-200 px-4 py-3 text-sm font-bold uppercase tracking-[0.2em] text-slate-950 transition hover:scale-[1.01] hover:shadow-lg hover:shadow-lime-400/20 focus-visible:ring-4 focus-visible:ring-lime-200/70 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950 disabled:cursor-not-allowed disabled:opacity-70"
+            >
             <svg class="h-5 w-5" viewBox="0 0 24 24" aria-hidden="true">
               <path fill="currentColor" d="M21.35 11.1h-9.17v2.98h5.26c-.23 1.5-1.74 4.4-5.26 4.4-3.17 0-5.75-2.63-5.75-5.88s2.58-5.88 5.75-5.88c1.8 0 3 .76 3.69 1.41l2.51-2.43C16.77 4.2 14.7 3.25 12.18 3.25 7.24 3.25 3.25 7.29 3.25 12.25s3.99 9 8.93 9c5.15 0 8.57-3.62 8.57-8.72 0-.59-.06-1.03-.14-1.43Z"/>
             </svg>
-            {{ isLoading ? 'Conectando...' : 'Entrar con Google' }}
+            {{ isLoading ? ('login.googleLoading' | t) : ('login.googleCta' | t) }}
           </button>
 
           <button
             type="button"
             (click)="signInAsGuest()"
             [disabled]="isLoading || isGuestLoading"
-            class="inline-flex w-full items-center justify-center rounded-2xl border border-white/15 bg-white/5 px-4 py-3 text-sm font-semibold uppercase tracking-[0.18em] text-white transition hover:bg-white/10 focus:outline-none disabled:cursor-not-allowed disabled:opacity-70"
-          >
-            {{ isGuestLoading ? 'Abriendo acceso...' : 'Continuar como invitado' }}
+            [attr.aria-busy]="isGuestLoading ? 'true' : 'false'"
+            class="inline-flex w-full items-center justify-center rounded-2xl border border-white/15 bg-white/5 px-4 py-3 text-sm font-semibold uppercase tracking-[0.18em] text-white transition hover:bg-white/10 focus-visible:ring-4 focus-visible:ring-emerald-200/70 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950 disabled:cursor-not-allowed disabled:opacity-70"
+            >
+            {{ isGuestLoading ? ('login.guestLoading' | t) : ('login.guestCta' | t) }}
           </button>
 
-          <p *ngIf="errorMessage" class="rounded-2xl border border-red-400/20 bg-red-500/10 px-4 py-3 text-sm text-red-200">
-            {{ errorMessage }}
-          </p>
+          @if (errorMessage) {
+            <p aria-live="polite" class="rounded-2xl border border-red-400/20 bg-red-500/10 px-4 py-3 text-sm text-red-200">
+              {{ errorMessage }}
+            </p>
+          }
 
           <p class="text-xs leading-6 text-slate-400">
-            Puedes entrar con Google o usar un acceso anónimo para revisar el portal sin asociar una cuenta del equipo.
+            {{ 'login.helpText' | t }}
           </p>
         </div>
       </div>

@@ -1,6 +1,8 @@
 # Huerto
 
-Base de proyecto Angular 18 pensada para reutilizarse como plantilla de una web general con autenticación real, estilos con Tailwind, pruebas con Jest y Playwright, y despliegue en GitHub Pages.
+Base de proyecto Angular 21 pensada para reutilizarse como plantilla de una web general con autenticación real, estilos con Tailwind, pruebas con Jest y Playwright, despliegue en GitHub Pages e internacionalización básica en español e inglés.
+
+La internacionalización se guarda en ficheros `json` por idioma dentro de `src/assets/i18n/`, y el selector global de idioma usa PrimeNG con el estilo visual integrado en la propia app.
 
 Este repositorio ya incluye:
 
@@ -222,6 +224,15 @@ El workflow de `.github/workflows/deploy-pages.yml`:
 4. copia `index.html` a `404.html` para SPA fallback
 5. sube `dist/huerto`
 6. despliega a GitHub Pages
+
+### Nota sobre routing en GitHub Pages
+
+Este proyecto usa hash routing de Angular (`useHash: true`), así que las rutas públicas en navegador quedan como:
+
+- `/#/login`
+- `/#/dashboard`
+
+Esto es intencional. GitHub Pages sirve contenido estático y, al entrar directamente en rutas limpias como `/login`, puede devolver un HTTP `404` antes de que la SPA redirija o se recupere con el fallback. Con hash routing evitamos ese falso 404 en accesos directos.
 
 ## URL y baseHref
 
