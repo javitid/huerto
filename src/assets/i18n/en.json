@@ -44,19 +44,64 @@
     "dayTitle": "Irrigation, review, and harvest",
     "dayDescription": "Keep track of the day and share incidents with the team from the portal.",
     "cards": {
-      "sowingTitle": "Sowing",
-      "sowingDescription": "Active campaigns across summer fields and greenhouse.",
-      "irrigationTitle": "Irrigation",
-      "irrigationDescription": "Sectors pending review before the end of the day.",
-      "harvestTitle": "Harvest",
-      "harvestDescription": "Production logged this week across tomatoes, lettuce, and zucchini."
+      "pendingTitle": "Pending tasks",
+      "pendingDescription": "Work not started yet or just scheduled.",
+      "inProgressTitle": "In progress",
+      "inProgressDescription": "Tasks the team is actively working on.",
+      "doneTitle": "Done",
+      "doneDescription": "Tasks already completed and logged."
     },
     "summaryTitle": "Operational summary",
     "summaryBadge": "Orchard",
     "summary": {
-      "plots": "Plots",
-      "openTasks": "Open tasks",
-      "incidents": "Incidents"
+      "pending": "Pending tasks",
+      "inProgress": "In progress",
+      "done": "Done"
+    },
+    "firestore": {
+      "title": "Tasks connected to Firestore",
+      "form": {
+        "eyebrow": "Create a real task",
+        "title": "Add Firestore tasks from the dashboard",
+        "description": "This form stores real documents in users/{uid}/tasks for the authenticated account. As soon as you save a task, it will appear in the list below.",
+        "fields": {
+          "title": "Title",
+          "area": "Area or plot",
+          "status": "Initial status"
+        },
+        "placeholders": {
+          "title": "Example: Check greenhouse irrigation",
+          "area": "Example: North greenhouse"
+        },
+        "submit": "Save task",
+        "saving": "Saving...",
+        "success": "The task was saved in Firestore."
+      },
+      "emptyEyebrow": "Empty collection",
+      "emptyTitle": "There are no real Firestore tasks for this account yet.",
+      "emptyDescription": "Create documents in users/{uid}/tasks with the fields title, area, status, and createdAt so this view can render real data.",
+      "noDate": "Pending date",
+      "setupEyebrow": "Practical next step",
+      "setupTitle": "Use Firestore as your first database",
+      "setupDescription": "You do not need a custom backend to get started. You can store tasks and crop follow-up data in Firestore now and add Cloud Functions or a dedicated server later if needed.",
+      "actions": {
+        "edit": "Edit",
+        "delete": "Delete",
+        "save": "Save changes",
+        "cancel": "Cancel"
+      },
+      "errors": {
+        "required": "Fill in title and area before saving.",
+        "save": "The task could not be saved to Firestore.",
+        "update": "The task status could not be updated.",
+        "delete": "The task could not be deleted.",
+        "config": "Configure Firebase and sign in with a valid account before saving tasks."
+      },
+      "status": {
+        "pending": "Pending",
+        "in-progress": "In progress",
+        "done": "Done"
+      }
     },
     "nextStepEyebrow": "Next step",
     "nextStepTitle": "Connect agronomic data",

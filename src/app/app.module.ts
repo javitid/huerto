@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
 import { providePrimeNG } from 'primeng/config';
@@ -9,8 +9,6 @@ import Aura from '@primeuix/themes/aura';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { LoginComponent } from './login/login.component';
-import { DashboardComponent } from './dashboard/dashboard.component';
 import { TranslatePipe } from './i18n/translate.pipe';
 import { LanguageSwitcherComponent } from './language-switcher/language-switcher.component';
 import { NotFoundComponent } from './not-found/not-found.component';
@@ -20,15 +18,12 @@ import { BackendErrorInterceptor } from './backend-error/backend-error.intercept
 @NgModule({
   declarations: [
     AppComponent,
-    LoginComponent,
-    DashboardComponent,
     LanguageSwitcherComponent,
     NotFoundComponent,
     BackendErrorComponent
   ],
   imports: [
     BrowserModule,
-    BrowserAnimationsModule,
     HttpClientModule,
     FormsModule,
     SelectModule,
@@ -41,6 +36,7 @@ import { BackendErrorInterceptor } from './backend-error/backend-error.intercept
       useClass: BackendErrorInterceptor,
       multi: true
     },
+    provideAnimationsAsync(),
     providePrimeNG({
       ripple: false,
       theme: {

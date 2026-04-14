@@ -44,19 +44,64 @@
     "dayTitle": "Riego, revisión y cosecha",
     "dayDescription": "Mantén el seguimiento del día y comparte incidencias con el equipo desde el portal.",
     "cards": {
-      "sowingTitle": "Siembras",
-      "sowingDescription": "Campañas activas repartidas entre huerta de verano e invernadero.",
-      "irrigationTitle": "Riegos",
-      "irrigationDescription": "Sectores pendientes de revisión antes del cierre de la jornada.",
-      "harvestTitle": "Cosecha",
-      "harvestDescription": "Producción registrada esta semana entre tomate, lechuga y calabacín."
+      "pendingTitle": "Tareas pendientes",
+      "pendingDescription": "Trabajos todavía sin empezar o recién planificados.",
+      "inProgressTitle": "En curso",
+      "inProgressDescription": "Tareas que el equipo está ejecutando ahora mismo.",
+      "doneTitle": "Hechas",
+      "doneDescription": "Tareas ya cerradas y registradas correctamente."
     },
     "summaryTitle": "Resumen operativo",
     "summaryBadge": "Huerta",
     "summary": {
-      "plots": "Parcelas",
-      "openTasks": "Tareas abiertas",
-      "incidents": "Incidencias"
+      "pending": "Tareas pendientes",
+      "inProgress": "En curso",
+      "done": "Hechas"
+    },
+    "firestore": {
+      "title": "Tareas conectadas con Firestore",
+      "form": {
+        "eyebrow": "Crear tarea real",
+        "title": "Añade tareas a Firestore desde el panel",
+        "description": "Este formulario guarda documentos reales en users/{uid}/tasks para la cuenta autenticada. En cuanto guardes una tarea, aparecerá en la lista inferior.",
+        "fields": {
+          "title": "Título",
+          "area": "Área o parcela",
+          "status": "Estado inicial"
+        },
+        "placeholders": {
+          "title": "Ej. Revisar riego del invernadero",
+          "area": "Ej. Invernadero norte"
+        },
+        "submit": "Guardar tarea",
+        "saving": "Guardando...",
+        "success": "La tarea se ha guardado en Firestore."
+      },
+      "emptyEyebrow": "Colección vacía",
+      "emptyTitle": "Todavía no hay tareas reales en Firestore para esta cuenta.",
+      "emptyDescription": "Crea documentos dentro de users/{uid}/tasks con los campos title, area, status y createdAt para que esta vista muestre datos reales.",
+      "noDate": "Fecha pendiente",
+      "setupEyebrow": "Siguiente paso real",
+      "setupTitle": "Usa Firestore como tu primera base de datos",
+      "setupDescription": "Ya no necesitas un backend propio para arrancar. Puedes guardar tareas y seguimiento de campaña en Firestore y, si más adelante hace falta, añadir Cloud Functions o un servidor dedicado.",
+      "actions": {
+        "edit": "Editar",
+        "delete": "Eliminar",
+        "save": "Guardar cambios",
+        "cancel": "Cancelar"
+      },
+      "errors": {
+        "required": "Completa título y área antes de guardar.",
+        "save": "No se pudo guardar la tarea en Firestore.",
+        "update": "No se pudo actualizar el estado de la tarea.",
+        "delete": "No se pudo eliminar la tarea.",
+        "config": "Configura Firebase y entra con una cuenta válida para guardar tareas."
+      },
+      "status": {
+        "pending": "Pendiente",
+        "in-progress": "En curso",
+        "done": "Hecha"
+      }
     },
     "nextStepEyebrow": "Siguiente paso",
     "nextStepTitle": "Conectar datos agronómicos",

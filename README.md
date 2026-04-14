@@ -6,6 +6,10 @@ La internacionalización se guarda en ficheros `json` por idioma dentro de `src/
 
 Las pantallas de ruta de esta base, incluidas `login`, `dashboard` y las vistas de error, deben componerse por defecto con utilidades Tailwind en los templates. Los `*.component.scss` se mantienen como soporte excepcional, no como vía principal de maquetación.
 
+La base ya está preparada para usar Firebase Authentication en frontend y puede conectarse directamente a Firestore como primera base de datos sin necesidad de levantar un servidor propio.
+
+Para Firestore, esta base asume una colección por usuario en `users/{uid}/tasks` y trae archivos iniciales de reglas e índices en `firestore.rules` y `firestore.indexes.json`.
+
 Este repositorio ya incluye:
 
 - Angular 18 con NgModules
@@ -33,10 +37,16 @@ Este repositorio ya incluye:
 - `src/app/auth/auth.guard.ts`: protección de rutas
 - `src/app/login/`: pantalla de login
 - `src/app/dashboard/`: pantalla protegida
+- `src/app/login/login.module.ts`: módulo lazy para el área de acceso
+- `src/app/dashboard/dashboard.module.ts`: módulo lazy para el área autenticada
+- `src/app/firebase/firebase-app.ts`: utilidad compartida de inicialización de Firebase
+- `src/app/dashboard/data/dashboard-firestore.service.ts`: lectura de datos reales desde Firestore para el dashboard
 - `src/environments/environment.ts`: placeholders seguros
 - `src/environments/environment.prod.ts`: placeholders seguros para producción
 - `src/environments/environment.local.ts`: configuración real local, ignorada por git
 - `src/environments/environment.local.example.ts`: plantilla del entorno local
+- `firestore.rules`: reglas base de acceso por usuario para Firestore
+- `firestore.indexes.json`: índice inicial de Firestore
 - `.github/workflows/deploy-pages.yml`: despliegue automático a GitHub Pages
 
 ## Scripts
@@ -73,7 +83,7 @@ npm start
 
 ## Configuración de Firebase
 
-Esta base usa Firebase Authentication en el frontend.
+Esta base usa Firebase Authentication en el frontend y puede usar Firestore como base de datos inicial.
 
 ### 1. Crear proyecto
 
@@ -122,6 +132,32 @@ En Firebase Console:
 4. pestaña `Sign-in method`
 5. habilita `Google`
 6. habilita `Anonymous` si quieres acceso invitado
+
+### 3.b Crear Firestore Database
+
+En Firebase Console:
+
+1. `Build`
+2. `Firestore Database`
+3. `Create database`
+4. elige modo `production` o `test` solo para arranque rápido local
+5. selecciona la región
+
+La estructura esperada por el dashboard es:
+
+- `users/{uid}/tasks/{taskId}`
+
+Campos recomendados por documento:
+
+- `title`: `string`
+- `area`: `string`
+- `dueLabel`: `string`
+- `status`: `pending` | `in-progress` | `done`
+- `createdAt`: `timestamp`
+
+Reglas iniciales:
+
+- copia el contenido de `firestore.rules` en las reglas de Firestore, o despliega ese archivo desde Firebase CLI cuando la config de proyecto ya exista.
 
 ### 4. Dominios autorizados
 

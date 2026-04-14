@@ -1,0 +1,298 @@
+<section class="min-h-screen bg-slate-950 px-4 py-10 text-slate-50 sm:px-6 lg:px-8">
+  <div class="mx-auto flex max-w-6xl flex-col gap-8">
+    <header class="overflow-hidden rounded-3xl border border-white/10 bg-gradient-to-r from-slate-900 via-emerald-950 to-slate-900 p-8 shadow-xl shadow-slate-950/30">
+      <div class="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
+        <div class="space-y-3">
+          <p class="text-sm font-semibold uppercase tracking-[0.35em] text-lime-300">{{ 'dashboard.eyebrow' | t }}</p>
+          <h1 class="text-4xl font-black tracking-tight text-white sm:text-5xl">{{ 'dashboard.title' | t }}</h1>
+          <p class="max-w-2xl text-base leading-7 text-slate-300">
+            {{ 'dashboard.description' | t }}
+          </p>
+        </div>
+        <div class="flex flex-col items-start gap-3 lg:items-end">
+          <div class="inline-flex rounded-full border border-emerald-400/30 bg-emerald-400/10 px-4 py-2 text-sm font-medium text-emerald-200">
+            {{ 'dashboard.sessionOk' | t }}
+          </div>
+          <button
+            type="button"
+            (click)="logout()"
+            class="rounded-2xl border border-white/15 px-4 py-2 text-sm font-semibold text-white transition hover:bg-white/10 focus-visible:ring-4 focus-visible:ring-emerald-200/70 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950"
+            >
+            {{ 'dashboard.logout' | t }}
+          </button>
+        </div>
+      </div>
+    </header>
+
+    @if (user$ | async; as user) {
+      <section class="grid gap-5 lg:grid-cols-[1.2fr_0.8fr]">
+        <article class="rounded-3xl border border-white/10 bg-white/5 p-6 backdrop-blur">
+          <p class="text-sm uppercase tracking-[0.3em] text-slate-400">{{ 'dashboard.activeAccount' | t }}</p>
+          <h2 class="mt-4 text-2xl font-bold text-white">{{ user.displayName || ('dashboard.authenticatedUser' | t) }}</h2>
+          <p class="mt-2 text-sm text-slate-300">{{ user.email }}</p>
+        </article>
+        <article class="rounded-3xl border border-lime-300/20 bg-lime-300/10 p-6">
+          <p class="text-sm uppercase tracking-[0.3em] text-lime-100/80">{{ 'dashboard.dayEyebrow' | t }}</p>
+          <p class="mt-4 text-2xl font-bold text-white">{{ 'dashboard.dayTitle' | t }}</p>
+          <p class="mt-2 text-sm text-slate-200">{{ 'dashboard.dayDescription' | t }}</p>
+        </article>
+      </section>
+    }
+
+    @if (user$ | async; as user) {
+      <section class="rounded-3xl border border-white/10 bg-slate-900/80 p-8 shadow-xl shadow-slate-950/30">
+        <div class="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+          <div>
+            <p class="text-sm font-semibold uppercase tracking-[0.3em] text-lime-300">{{ 'dashboard.firestore.form.eyebrow' | t }}</p>
+            <h2 class="mt-3 text-2xl font-bold text-white">{{ 'dashboard.firestore.form.title' | t }}</h2>
+            <p class="mt-3 max-w-2xl text-sm leading-7 text-slate-300">{{ 'dashboard.firestore.form.description' | t }}</p>
+          </div>
+          <div class="rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-slate-300">
+            {{ user.uid }}
+          </div>
+        </div>
+
+        <div class="mt-6 grid gap-4 md:grid-cols-2">
+          <label class="space-y-2">
+            <span class="text-sm font-semibold text-slate-200">{{ 'dashboard.firestore.form.fields.title' | t }}</span>
+            <input
+              type="text"
+              [ngModel]="taskTitle()"
+              (ngModelChange)="taskTitle.set($event)"
+              class="w-full rounded-2xl border border-white/10 bg-slate-800 px-4 py-3 text-sm text-white outline-none transition placeholder:text-slate-500 focus-visible:ring-4 focus-visible:ring-lime-200/40"
+              [placeholder]="'dashboard.firestore.form.placeholders.title' | t"
+            />
+          </label>
+
+          <label class="space-y-2">
+            <span class="text-sm font-semibold text-slate-200">{{ 'dashboard.firestore.form.fields.area' | t }}</span>
+            <input
+              type="text"
+              [ngModel]="taskArea()"
+              (ngModelChange)="taskArea.set($event)"
+              class="w-full rounded-2xl border border-white/10 bg-slate-800 px-4 py-3 text-sm text-white outline-none transition placeholder:text-slate-500 focus-visible:ring-4 focus-visible:ring-lime-200/40"
+              [placeholder]="'dashboard.firestore.form.placeholders.area' | t"
+            />
+          </label>
+
+          <label class="space-y-2">
+            <span class="text-sm font-semibold text-slate-200">{{ 'dashboard.firestore.form.fields.status' | t }}</span>
+            <div class="relative">
+              <select
+                [ngModel]="taskStatus()"
+                (ngModelChange)="setTaskStatus($event)"
+                class="dashboard-status-select w-full appearance-none rounded-2xl border px-4 py-3 pr-12 text-sm font-semibold outline-none transition duration-150 ease-in-out focus-visible:ring-4 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950"
+                [ngClass]="getStatusSelectClasses(taskStatus())"
+              >
+                <option [value]="dashboardTaskStatus.Pending">{{ 'dashboard.firestore.status.pending' | t }}</option>
+                <option [value]="dashboardTaskStatus.InProgress">{{ 'dashboard.firestore.status.in-progress' | t }}</option>
+                <option [value]="dashboardTaskStatus.Done">{{ 'dashboard.firestore.status.done' | t }}</option>
+              </select>
+              <span class="pointer-events-none absolute inset-y-0 right-4 flex items-center text-current">
+                <i class="pi pi-angle-down text-xs"></i>
+              </span>
+            </div>
+          </label>
+        </div>
+
+        <div class="mt-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <div class="space-y-2">
+            @if (createTaskError()) {
+              <p class="rounded-2xl border border-red-400/20 bg-red-500/10 px-4 py-3 text-sm text-red-200">
+                {{ createTaskError() }}
+              </p>
+            }
+            @if (createTaskSuccess()) {
+              <p class="rounded-2xl border border-emerald-300/20 bg-emerald-400/10 px-4 py-3 text-sm text-emerald-100">
+                {{ createTaskSuccess() }}
+              </p>
+            }
+            @if (taskMutationError()) {
+              <p class="rounded-2xl border border-red-400/20 bg-red-500/10 px-4 py-3 text-sm text-red-200">
+                {{ taskMutationError() }}
+              </p>
+            }
+          </div>
+
+          <button
+            type="button"
+            (click)="createTask(user.uid)"
+            [disabled]="createTaskPending()"
+            [attr.aria-busy]="createTaskPending() ? 'true' : 'false'"
+            class="inline-flex min-h-12 items-center justify-center rounded-2xl bg-gradient-to-r from-lime-300 via-emerald-300 to-amber-200 px-5 text-sm font-bold uppercase tracking-[0.18em] text-slate-950 transition hover:scale-[1.01] focus-visible:ring-4 focus-visible:ring-lime-200/70 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950 disabled:cursor-not-allowed disabled:opacity-70"
+          >
+            {{ createTaskPending() ? ('dashboard.firestore.form.saving' | t) : ('dashboard.firestore.form.submit' | t) }}
+          </button>
+        </div>
+      </section>
+    }
+
+    @if (dashboardData$ | async; as dashboardData) {
+      <div class="grid gap-5 md:grid-cols-3">
+        <article class="rounded-3xl border border-white/10 bg-white/5 p-6 backdrop-blur">
+          <p class="text-sm uppercase tracking-[0.3em] text-slate-400">{{ 'dashboard.cards.pendingTitle' | t }}</p>
+          <p class="mt-4 text-3xl font-bold text-white">{{ dashboardData.pendingTasks }}</p>
+          <p class="mt-2 text-sm text-slate-300">{{ 'dashboard.cards.pendingDescription' | t }}</p>
+        </article>
+
+        <article class="rounded-3xl border border-white/10 bg-white/5 p-6 backdrop-blur">
+          <p class="text-sm uppercase tracking-[0.3em] text-slate-400">{{ 'dashboard.cards.inProgressTitle' | t }}</p>
+          <p class="mt-4 text-3xl font-bold text-white">{{ dashboardData.inProgressTasks }}</p>
+          <p class="mt-2 text-sm text-slate-300">{{ 'dashboard.cards.inProgressDescription' | t }}</p>
+        </article>
+
+        <article class="rounded-3xl border border-white/10 bg-white/5 p-6 backdrop-blur">
+          <p class="text-sm uppercase tracking-[0.3em] text-slate-400">{{ 'dashboard.cards.doneTitle' | t }}</p>
+          <p class="mt-4 text-3xl font-bold text-white">{{ dashboardData.completedTasks }}</p>
+          <p class="mt-2 text-sm text-slate-300">{{ 'dashboard.cards.doneDescription' | t }}</p>
+        </article>
+      </div>
+
+      <div class="grid gap-5 lg:grid-cols-[1.3fr_0.7fr]">
+      <article class="rounded-3xl border border-white/10 bg-slate-900/80 p-8">
+        <div class="mb-6 flex items-center justify-between">
+          <h2 class="text-2xl font-bold text-white">{{ 'dashboard.firestore.title' | t }}</h2>
+          <span class="rounded-full bg-lime-400/10 px-3 py-1 text-xs font-semibold uppercase tracking-[0.2em] text-lime-300">{{ 'dashboard.summaryBadge' | t }}</span>
+        </div>
+        <div class="grid gap-4 sm:grid-cols-3">
+          <div class="rounded-2xl bg-slate-800 p-5">
+            <p class="text-sm text-slate-400">{{ 'dashboard.summary.pending' | t }}</p>
+            <p class="mt-3 text-2xl font-bold text-white">{{ dashboardData.pendingTasks }}</p>
+          </div>
+          <div class="rounded-2xl bg-slate-800 p-5">
+            <p class="text-sm text-slate-400">{{ 'dashboard.summary.inProgress' | t }}</p>
+            <p class="mt-3 text-2xl font-bold text-white">{{ dashboardData.inProgressTasks }}</p>
+          </div>
+          <div class="rounded-2xl bg-slate-800 p-5">
+            <p class="text-sm text-slate-400">{{ 'dashboard.summary.done' | t }}</p>
+            <p class="mt-3 text-2xl font-bold text-white">{{ dashboardData.completedTasks }}</p>
+          </div>
+        </div>
+
+        @if (dashboardData.tasks.length > 0) {
+          <div class="mt-6 space-y-3">
+            @for (task of dashboardData.tasks; track task.id) {
+              <div
+                class="rounded-2xl border border-white/10 bg-slate-800/80 p-4"
+                [attr.data-testid]="'task-card-' + task.id"
+              >
+                <div class="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+                  <div class="flex-1">
+                    @if (editingTaskId() === task.id) {
+                      <div class="grid gap-3">
+                        <label class="space-y-2">
+                          <span class="text-xs font-semibold uppercase tracking-[0.2em] text-slate-400">{{ 'dashboard.firestore.form.fields.title' | t }}</span>
+                          <input
+                            type="text"
+                            [ngModel]="editTaskTitle()"
+                            (ngModelChange)="editTaskTitle.set($event)"
+                            class="w-full rounded-2xl border border-white/10 bg-slate-900 px-4 py-3 text-sm text-white outline-none transition placeholder:text-slate-500 focus-visible:ring-4 focus-visible:ring-lime-200/40"
+                            [attr.data-testid]="'edit-title-' + task.id"
+                          />
+                        </label>
+                        <label class="space-y-2">
+                          <span class="text-xs font-semibold uppercase tracking-[0.2em] text-slate-400">{{ 'dashboard.firestore.form.fields.area' | t }}</span>
+                          <input
+                            type="text"
+                            [ngModel]="editTaskArea()"
+                            (ngModelChange)="editTaskArea.set($event)"
+                            class="w-full rounded-2xl border border-white/10 bg-slate-900 px-4 py-3 text-sm text-white outline-none transition placeholder:text-slate-500 focus-visible:ring-4 focus-visible:ring-lime-200/40"
+                            [attr.data-testid]="'edit-area-' + task.id"
+                          />
+                        </label>
+                      </div>
+                    } @else {
+                      <p class="text-base font-semibold text-white">{{ task.title }}</p>
+                      <p class="mt-1 text-sm text-slate-300">{{ task.area }}</p>
+                    }
+                    <p class="mt-2 text-xs uppercase tracking-[0.2em] text-slate-400">{{ task.createdAt | dashboardTaskDate }}</p>
+                  </div>
+                  @if (user$ | async; as currentUser) {
+                    <div class="flex w-full flex-col gap-3 sm:w-56">
+                      <div class="relative">
+                        <select
+                          [ngModel]="task.status"
+                          (ngModelChange)="updateTaskStatus(currentUser.uid, task.id, $event)"
+                          [disabled]="taskMutationPendingId() === task.id"
+                          [attr.aria-busy]="taskMutationPendingId() === task.id ? 'true' : 'false'"
+                          [attr.data-testid]="'task-status-' + task.id"
+                          class="dashboard-status-select w-full appearance-none rounded-2xl border px-4 py-3 pr-12 text-sm font-semibold outline-none transition duration-150 ease-in-out focus-visible:ring-4 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950 disabled:cursor-not-allowed disabled:opacity-70"
+                          [ngClass]="getStatusSelectClasses(task.status)"
+                        >
+                          <option [value]="dashboardTaskStatus.Pending">{{ 'dashboard.firestore.status.pending' | t }}</option>
+                          <option [value]="dashboardTaskStatus.InProgress">{{ 'dashboard.firestore.status.in-progress' | t }}</option>
+                          <option [value]="dashboardTaskStatus.Done">{{ 'dashboard.firestore.status.done' | t }}</option>
+                        </select>
+                        <span class="pointer-events-none absolute inset-y-0 right-4 flex items-center text-current">
+                          <i class="pi pi-angle-down text-xs"></i>
+                        </span>
+                      </div>
+
+                      @if (editingTaskId() === task.id) {
+                        <div class="grid gap-2 sm:grid-cols-2">
+                          <button
+                            type="button"
+                            (click)="saveTask(currentUser.uid, task.id)"
+                            [disabled]="taskMutationPendingId() === task.id"
+                            [attr.data-testid]="'save-task-' + task.id"
+                            class="rounded-2xl border border-lime-300/20 bg-lime-300/10 px-4 py-3 text-xs font-semibold uppercase tracking-[0.18em] text-lime-100 transition hover:bg-lime-300/20 focus-visible:ring-4 focus-visible:ring-lime-200/40 disabled:cursor-not-allowed disabled:opacity-70"
+                          >
+                            {{ 'dashboard.firestore.actions.save' | t }}
+                          </button>
+                          <button
+                            type="button"
+                            (click)="cancelEditingTask()"
+                            [disabled]="taskMutationPendingId() === task.id"
+                            class="rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-xs font-semibold uppercase tracking-[0.18em] text-slate-100 transition hover:bg-white/10 focus-visible:ring-4 focus-visible:ring-white/20 disabled:cursor-not-allowed disabled:opacity-70"
+                          >
+                            {{ 'dashboard.firestore.actions.cancel' | t }}
+                          </button>
+                        </div>
+                      } @else {
+                        <div class="grid gap-2 sm:grid-cols-2">
+                          <button
+                            type="button"
+                            (click)="startEditingTask(task)"
+                            [disabled]="taskMutationPendingId() === task.id"
+                            [attr.data-testid]="'edit-task-' + task.id"
+                            class="rounded-2xl border border-sky-300/20 bg-sky-300/10 px-4 py-3 text-xs font-semibold uppercase tracking-[0.18em] text-sky-100 transition hover:bg-sky-300/20 focus-visible:ring-4 focus-visible:ring-sky-200/40 disabled:cursor-not-allowed disabled:opacity-70"
+                          >
+                            {{ 'dashboard.firestore.actions.edit' | t }}
+                          </button>
+                          <button
+                            type="button"
+                            (click)="deleteTask(currentUser.uid, task.id)"
+                            [disabled]="taskMutationPendingId() === task.id"
+                            [attr.data-testid]="'delete-task-' + task.id"
+                            class="rounded-2xl border border-rose-300/20 bg-rose-300/10 px-4 py-3 text-xs font-semibold uppercase tracking-[0.18em] text-rose-100 transition hover:bg-rose-300/20 focus-visible:ring-4 focus-visible:ring-rose-200/40 disabled:cursor-not-allowed disabled:opacity-70"
+                          >
+                            {{ 'dashboard.firestore.actions.delete' | t }}
+                          </button>
+                        </div>
+                      }
+                    </div>
+                  }
+                </div>
+              </div>
+            }
+          </div>
+        } @else {
+          <div class="mt-6 rounded-3xl border border-dashed border-white/15 bg-slate-800/40 p-6">
+            <p class="text-sm font-semibold uppercase tracking-[0.2em] text-lime-200">{{ 'dashboard.firestore.emptyEyebrow' | t }}</p>
+            <h3 class="mt-3 text-xl font-bold text-white">{{ 'dashboard.firestore.emptyTitle' | t }}</h3>
+            <p class="mt-3 max-w-2xl text-sm leading-7 text-slate-300">{{ 'dashboard.firestore.emptyDescription' | t }}</p>
+          </div>
+        }
+      </article>
+
+      <aside class="rounded-3xl border border-white/10 bg-gradient-to-br from-lime-400/15 to-amber-300/15 p-8">
+        <p class="text-sm font-semibold uppercase tracking-[0.3em] text-amber-200">{{ 'dashboard.firestore.setupEyebrow' | t }}</p>
+        <h2 class="mt-3 text-2xl font-bold text-white">{{ 'dashboard.firestore.setupTitle' | t }}</h2>
+        <p class="mt-3 text-sm leading-7 text-slate-200">
+          {{ 'dashboard.firestore.setupDescription' | t }}
+        </p>
+      </aside>
+      </div>
+    }
+  </div>
+</section>

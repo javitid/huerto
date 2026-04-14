@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { BehaviorSubject } from 'rxjs';
-import { initializeApp, getApp, getApps } from 'firebase/app';
 import {
   GoogleAuthProvider,
   User,
@@ -13,17 +12,16 @@ import {
   signInWithPopup,
   signOut
 } from 'firebase/auth';
-import { environment } from '../../environments/environment';
+import { getFirebaseApp, hasFirebaseConfig } from '../firebase/firebase-app';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
-  private readonly firebaseConfig = environment.firebase;
-  private readonly configReady = this.hasFirebaseConfig();
+  private readonly configReady = hasFirebaseConfig();
   private readonly userSubject = new BehaviorSubject<User | null>(null);
   private readonly readySubject = new BehaviorSubject<boolean>(false);
-  private readonly auth = this.configReady ? getAuth(this.getFirebaseApp()) : null;
+  private readonly auth = this.configReady ? getAuth(getFirebaseApp()) : null;
 
   readonly user$ = this.userSubject.asObservable();
   readonly ready$ = this.readySubject.asObservable();
@@ -78,17 +76,5 @@ export class AuthService {
 
     this.userSubject.next(null);
     await this.router.navigate(['/login']);
-  }
-
-  private hasFirebaseConfig(): boolean {
-    return Object.values(this.firebaseConfig).every((value) => value.trim().length > 0);
-  }
-
-  private getFirebaseApp() {
-    if (getApps().length > 0) {
-      return getApp();
-    }
-
-    return initializeApp(this.firebaseConfig);
   }
 }

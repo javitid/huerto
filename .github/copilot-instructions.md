@@ -19,8 +19,11 @@ When regenerating this project, preserve all of the following unless the user ex
 - Jest for unit testing.
 - Playwright + `playwright-bdd` for end-to-end / acceptance testing.
 - A two-screen app with `login` and `dashboard` routes.
+- The `login` and `dashboard` routes lazily loaded so Firebase-backed features do not bloat the initial bundle.
+- The `dashboard` route lazily loaded so authenticated data features do not bloat the initial bundle.
 - Runtime internationalization with Spanish and English available by default.
 - Firebase Authentication integrated in the frontend.
+- Firestore-ready data access as the default first persistence layer when there is no custom backend server yet.
 - Google sign-in and anonymous sign-in available from the login screen.
 - Route protection for the dashboard using an Angular auth guard.
 - A local-only Firebase environment file ignored by git.
@@ -79,15 +82,21 @@ The project should look like this at a high level:
 - `src/app/auth/auth.service.ts` for Firebase auth integration.
 - `src/app/auth/auth.guard.ts` for protected routes.
 - `src/app/login/` with `login.component.ts/html/scss`.
-- `src/app/dashboard/` with `dashboard.component.ts/html/scss`.
+- `src/app/login/login.module.ts` and `src/app/login/login-routing.module.ts` for lazy loading the login area.
+- `src/app/dashboard/page/` with `dashboard.component.ts/html/scss`.
+- `src/app/dashboard/dashboard.module.ts` and `src/app/dashboard/dashboard-routing.module.ts` for lazy loading the dashboard area.
+- `src/app/dashboard/data/dashboard-firestore.service.ts` as the first Firestore-backed data access example.
 - `src/app/backend-error/` with `backend-error.component.ts/html/scss`.
 - `src/app/not-found/` with `not-found.component.ts/html/scss`.
 - `src/app/app.component.ts/html/scss`.
+- `src/app/firebase/firebase-app.ts` for shared Firebase app initialization helpers.
 - `src/styles.scss` containing Tailwind directives and global body/html styles.
 - `src/environments/environment.ts` with safe placeholders.
 - `src/environments/environment.prod.ts` with safe placeholders.
 - `src/environments/environment.local.ts` for real local Firebase config and ignored by git.
 - `src/environments/environment.local.example.ts` as the local template.
+- `firestore.rules`
+- `firestore.indexes.json`
 - `.github/workflows/deploy-pages.yml` injecting Firebase config from GitHub Secrets before the production build.
 - `.github/workflows/deploy-pages.yml` running unit tests and Playwright before the deploy jobs.
 - `tailwind.config.js`
@@ -103,8 +112,8 @@ The project should look like this at a high level:
 Prefer this routing table:
 
 - `/` redirects to `/login`
-- `/login` renders the login page
-- `/dashboard` renders the dashboard page and is protected by `AuthGuard`
+- `/login` lazy loads the login module
+- `/dashboard` lazy loads the dashboard module and is protected by `AuthGuard`
 
 Routing strategy note:
 
@@ -186,6 +195,7 @@ When generating or regenerating `angular.json`, preserve these behaviors:
 Authentication is part of the baseline project, not an optional enhancement.
 
 - Use Firebase Authentication in the frontend.
+- When there is no dedicated backend server, prefer Firestore as the initial persisted data layer.
 - Implement the auth layer in `src/app/auth/auth.service.ts`.
 - Use the Firebase JS SDK directly from `firebase/*` imports unless the user explicitly asks for AngularFire.
 - Support Google sign-in via `signInWithPopup(...)`.
@@ -196,6 +206,7 @@ Authentication is part of the baseline project, not an optional enhancement.
 - Protect `/dashboard` with an Angular route guard.
 - Include a logout action from the dashboard.
 - Keep login UX focused on provider-based access, not username/password simulation.
+- Keep Firestore SDK access inside dedicated Angular services instead of calling Firestore directly from components.
 
 If asked to regenerate the login flow, keep it real and production-shaped. Do not revert to a fake credential check just because it is simpler.
 
@@ -222,6 +233,12 @@ firebase: {
 ```
 
 Do not add service-account credentials, admin SDK secrets, private keys, or other backend-only secrets to the frontend app.
+
+When Firestore is used as the first database layer:
+
+- Prefer a per-user collection shape such as `users/{uid}/tasks`.
+- Keep starter rules in `firestore.rules`.
+- Keep starter indexes in `firestore.indexes.json`.
 
 ## GitHub Pages and Secret Injection
 
