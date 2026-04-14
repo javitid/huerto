@@ -62,6 +62,26 @@
     "nextStepTitle": "Connect agronomic data",
     "nextStepDescription": "With authentication in place, the natural next step is to connect real plots, crops, and records from your backend or database."
   },
+  "errors": {
+    "notFound": {
+      "code": "Error 404",
+      "eyebrow": "Route not found",
+      "title": "The screen you're looking for does not exist in Huerto.",
+      "description": "Check the address or return to a known area of the portal to keep working.",
+      "primaryCta": "Go to sign-in",
+      "secondaryCta": "Open dashboard"
+    },
+    "backend": {
+      "code": "Service error",
+      "eyebrow": "Problem connecting to the backend",
+      "title": "The operation could not be completed with the server.",
+      "description": "The app detected an error in a backend request. You can try again or return to a safe screen while the incident is being reviewed.",
+      "statusLabel": "Received status",
+      "defaultMessage": "An unexpected error occurred while processing the request.",
+      "retryCta": "Retry from sign-in",
+      "secondaryCta": "Back to dashboard"
+    }
+  },
   "auth": {
     "configGoogle": "Configure Firebase in the environment files to enable Google sign-in.",
     "configGuest": "Configure Firebase in the environment files to enable anonymous access."

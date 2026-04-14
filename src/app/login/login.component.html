@@ -51,29 +51,29 @@
           <button
             type="button"
             (click)="signInWithGoogle()"
-            [disabled]="isLoading || isGuestLoading"
-            [attr.aria-busy]="isLoading ? 'true' : 'false'"
+            [disabled]="isLoading() || isGuestLoading()"
+            [attr.aria-busy]="isLoading() ? 'true' : 'false'"
             class="inline-flex w-full items-center justify-center gap-3 rounded-2xl bg-gradient-to-r from-lime-300 via-emerald-300 to-amber-200 px-4 py-3 text-sm font-bold uppercase tracking-[0.2em] text-slate-950 transition hover:scale-[1.01] hover:shadow-lg hover:shadow-lime-400/20 focus-visible:ring-4 focus-visible:ring-lime-200/70 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950 disabled:cursor-not-allowed disabled:opacity-70"
             >
             <svg class="h-5 w-5" viewBox="0 0 24 24" aria-hidden="true">
               <path fill="currentColor" d="M21.35 11.1h-9.17v2.98h5.26c-.23 1.5-1.74 4.4-5.26 4.4-3.17 0-5.75-2.63-5.75-5.88s2.58-5.88 5.75-5.88c1.8 0 3 .76 3.69 1.41l2.51-2.43C16.77 4.2 14.7 3.25 12.18 3.25 7.24 3.25 3.25 7.29 3.25 12.25s3.99 9 8.93 9c5.15 0 8.57-3.62 8.57-8.72 0-.59-.06-1.03-.14-1.43Z"/>
             </svg>
-            {{ isLoading ? ('login.googleLoading' | t) : ('login.googleCta' | t) }}
+            {{ isLoading() ? ('login.googleLoading' | t) : ('login.googleCta' | t) }}
           </button>
 
           <button
             type="button"
             (click)="signInAsGuest()"
-            [disabled]="isLoading || isGuestLoading"
-            [attr.aria-busy]="isGuestLoading ? 'true' : 'false'"
+            [disabled]="isLoading() || isGuestLoading()"
+            [attr.aria-busy]="isGuestLoading() ? 'true' : 'false'"
             class="inline-flex w-full items-center justify-center rounded-2xl border border-white/15 bg-white/5 px-4 py-3 text-sm font-semibold uppercase tracking-[0.18em] text-white transition hover:bg-white/10 focus-visible:ring-4 focus-visible:ring-emerald-200/70 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950 disabled:cursor-not-allowed disabled:opacity-70"
             >
-            {{ isGuestLoading ? ('login.guestLoading' | t) : ('login.guestCta' | t) }}
+            {{ isGuestLoading() ? ('login.guestLoading' | t) : ('login.guestCta' | t) }}
           </button>
 
-          @if (errorMessage) {
+          @if (errorMessage()) {
             <p aria-live="polite" class="rounded-2xl border border-red-400/20 bg-red-500/10 px-4 py-3 text-sm text-red-200">
-              {{ errorMessage }}
+              {{ errorMessage() }}
             </p>
           }
 

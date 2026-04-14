@@ -4,6 +4,8 @@ Base de proyecto Angular 21 pensada para reutilizarse como plantilla de una web 
 
 La internacionalización se guarda en ficheros `json` por idioma dentro de `src/assets/i18n/`, y el selector global de idioma usa PrimeNG con el estilo visual integrado en la propia app.
 
+Las pantallas de ruta de esta base, incluidas `login`, `dashboard` y las vistas de error, deben componerse por defecto con utilidades Tailwind en los templates. Los `*.component.scss` se mantienen como soporte excepcional, no como vía principal de maquetación.
+
 Este repositorio ya incluye:
 
 - Angular 18 con NgModules

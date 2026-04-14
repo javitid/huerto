@@ -62,6 +62,26 @@
     "nextStepTitle": "Conectar datos agronómicos",
     "nextStepDescription": "Con la autenticación lista, el siguiente avance natural es enlazar parcelas, cultivos y registros reales desde tu backend o base de datos."
   },
+  "errors": {
+    "notFound": {
+      "code": "Error 404",
+      "eyebrow": "Ruta no encontrada",
+      "title": "La pantalla que buscas no existe en Huerto.",
+      "description": "Comprueba la dirección o vuelve a una zona conocida del portal para seguir trabajando.",
+      "primaryCta": "Ir al inicio de sesión",
+      "secondaryCta": "Abrir panel"
+    },
+    "backend": {
+      "code": "Error de servicio",
+      "eyebrow": "Problema al conectar con el backend",
+      "title": "No se pudo completar la operación con el servidor.",
+      "description": "La aplicación ha detectado un error en una llamada al backend. Puedes volver a intentarlo o regresar a una pantalla segura mientras revisamos la incidencia.",
+      "statusLabel": "Código recibido",
+      "defaultMessage": "Se produjo un error inesperado al procesar la solicitud.",
+      "retryCta": "Reintentar desde el login",
+      "secondaryCta": "Volver al panel"
+    }
+  },
   "auth": {
     "configGoogle": "Configura Firebase en los archivos environment para habilitar el acceso con Google.",
     "configGuest": "Configura Firebase en los archivos environment para habilitar el acceso anónimo."

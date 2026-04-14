@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { filter, take } from 'rxjs';
 import { AuthService } from '../auth/auth.service';
@@ -11,9 +11,9 @@ import { I18nService } from '../i18n/i18n.service';
     standalone: false
 })
 export class LoginComponent implements OnInit {
-  isLoading = false;
-  isGuestLoading = false;
-  errorMessage = '';
+  readonly isLoading = signal(false);
+  readonly isGuestLoading = signal(false);
+  readonly errorMessage = signal('');
 
   constructor(
     private router: Router,
@@ -35,34 +35,38 @@ export class LoginComponent implements OnInit {
   }
 
   async signInWithGoogle(): Promise<void> {
-    this.errorMessage = '';
-    this.isLoading = true;
+    this.errorMessage.set('');
+    this.isLoading.set(true);
 
     try {
       await this.authService.signInWithGoogle();
       await this.router.navigate(['/dashboard']);
     } catch (error) {
-      this.errorMessage = error instanceof Error
-        ? this.i18n.translate(error.message)
-        : this.i18n.translate('login.errors.google');
+      this.errorMessage.set(
+        error instanceof Error
+          ? this.i18n.translate(error.message)
+          : this.i18n.translate('login.errors.google')
+      );
     } finally {
-      this.isLoading = false;
+      this.isLoading.set(false);
     }
   }
 
   async signInAsGuest(): Promise<void> {
-    this.errorMessage = '';
-    this.isGuestLoading = true;
+    this.errorMessage.set('');
+    this.isGuestLoading.set(true);
 
     try {
       await this.authService.signInAsGuest();
       await this.router.navigate(['/dashboard']);
     } catch (error) {
-      this.errorMessage = error instanceof Error
-        ? this.i18n.translate(error.message)
-        : this.i18n.translate('login.errors.guest');
+      this.errorMessage.set(
+        error instanceof Error
+          ? this.i18n.translate(error.message)
+          : this.i18n.translate('login.errors.guest')
+      );
     } finally {
-      this.isGuestLoading = false;
+      this.isGuestLoading.set(false);
     }
   }
 }

@@ -28,7 +28,7 @@ When regenerating this project, preserve all of the following unless the user ex
 - CI validation with Jest unit tests and Playwright E2E before deployment.
 - The same npm scripts, or equivalent scripts with the same behavior.
 - The same dependency categories and purpose.
-- A visually styled login page and dashboard using Tailwind utility classes in templates.
+- A visually styled login page, dashboard, and route-level error screens using Tailwind utility classes in templates.
 - Separation inside `features/` between Gherkin files and step implementation code.
 
 Do not silently replace any of these with alternatives such as:
@@ -80,6 +80,8 @@ The project should look like this at a high level:
 - `src/app/auth/auth.guard.ts` for protected routes.
 - `src/app/login/` with `login.component.ts/html/scss`.
 - `src/app/dashboard/` with `dashboard.component.ts/html/scss`.
+- `src/app/backend-error/` with `backend-error.component.ts/html/scss`.
+- `src/app/not-found/` with `not-found.component.ts/html/scss`.
 - `src/app/app.component.ts/html/scss`.
 - `src/styles.scss` containing Tailwind directives and global body/html styles.
 - `src/environments/environment.ts` with safe placeholders.
@@ -135,7 +137,10 @@ This template uses both SCSS and Tailwind, but with a clear responsibility split
   - `@tailwind components;`
   - `@tailwind utilities;`
 - Use Tailwind utility classes directly in Angular templates for most layout and visual styling.
+- Every new screen, route view, or page-level UI introduced in this repository should be implemented with Tailwind utilities in the template by default.
+- This rule applies to the existing route-level screens too, including `login`, `dashboard`, `backend-error`, and `not-found` when they are regenerated or restyled.
 - Use component SCSS files only when a utility-first approach becomes awkward or when a local override is clearly cleaner.
+- When creating a new screen, assume `*.component.scss` should stay empty or near-empty unless there is a concrete exception.
 - Keep the visual design polished and intentional, but the copy should remain generic enough to serve as a reusable authenticated portal starter.
 - All interactive elements must be keyboard accessible by default.
 - Use native interactive elements such as `button`, `a`, `input`, and `select` instead of clickable `div` or `span` elements.

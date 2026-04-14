@@ -47,8 +47,8 @@ describe('LoginComponent', () => {
 
     expect(authService.signInWithGoogle).toHaveBeenCalled();
     expect(router.navigate).toHaveBeenCalledWith(['/dashboard']);
-    expect(component.isLoading).toBe(false);
-    expect(component.errorMessage).toBe('');
+    expect(component.isLoading()).toBe(false);
+    expect(component.errorMessage()).toBe('');
   });
 
   it('translates the google sign-in error key when the sign-in fails', async () => {
@@ -57,8 +57,8 @@ describe('LoginComponent', () => {
 
     await component.signInWithGoogle();
 
-    expect(component.errorMessage).toBe('translated:auth.configGoogle');
-    expect(component.isLoading).toBe(false);
+    expect(component.errorMessage()).toBe('translated:auth.configGoogle');
+    expect(component.isLoading()).toBe(false);
   });
 
   it('navigates after a successful guest sign-in', async () => {
@@ -68,6 +68,6 @@ describe('LoginComponent', () => {
 
     expect(authService.signInAsGuest).toHaveBeenCalled();
     expect(router.navigate).toHaveBeenCalledWith(['/dashboard']);
-    expect(component.isGuestLoading).toBe(false);
+    expect(component.isGuestLoading()).toBe(false);
   });
 });
