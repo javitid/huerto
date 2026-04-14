@@ -15,3 +15,8 @@
 
 - When a new architectural or styling rule becomes important, update documentation in `.github/copilot-instructions.md` and/or `README.md`.
 - Keep this `memory.md` updated with reusable project conventions discovered during implementation work.
+
+## Release Habit
+
+- Before creating a commit intended to be pushed to `master`, run both the unit test suite and the Playwright acceptance/E2E suite in the current workspace.
+- Do not push to `master` if either suite has not been run or is failing.

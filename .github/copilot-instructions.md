@@ -290,6 +290,7 @@ Before creating any commit, verify that both of these pass in the current worksp
 - Playwright end-to-end tests
 
 Do not create or propose a commit as ready if either suite is failing or has not been run.
+Do not push a commit to `master` until both suites have been run successfully in the current workspace.
 
 ## NPM Scripts Baseline
 
