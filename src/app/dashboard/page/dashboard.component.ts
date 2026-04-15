@@ -14,6 +14,11 @@ import { DashboardTask, DashboardTaskStatus, DashboardViewModel } from '../model
 })
 export class DashboardComponent {
   readonly dashboardTaskStatus = DashboardTaskStatus;
+  readonly statusOptions = [
+    { value: DashboardTaskStatus.Pending, labelKey: 'dashboard.firestore.status.pending' },
+    { value: DashboardTaskStatus.InProgress, labelKey: 'dashboard.firestore.status.in-progress' },
+    { value: DashboardTaskStatus.Done, labelKey: 'dashboard.firestore.status.done' }
+  ];
   readonly user$: Observable<User | null>;
   readonly dashboardData$: Observable<DashboardViewModel>;
   readonly taskTitle = signal('');
@@ -27,6 +32,7 @@ export class DashboardComponent {
   readonly editingTaskId = signal<string | null>(null);
   readonly editTaskTitle = signal('');
   readonly editTaskArea = signal('');
+  readonly activeTaskFilter = signal<DashboardTaskStatus | null>(null);
 
   constructor(
     private authService: AuthService,
@@ -185,6 +191,50 @@ export class DashboardComponent {
     } finally {
       this.taskMutationPendingId.set(null);
     }
+  }
+
+  toggleTaskFilter(status: DashboardTaskStatus): void {
+    this.activeTaskFilter.update((currentStatus) => currentStatus === status ? null : status);
+  }
+
+  isTaskFilterActive(status: DashboardTaskStatus): boolean {
+    return this.activeTaskFilter() === status;
+  }
+
+  getVisibleTasks(tasks: DashboardTask[]): DashboardTask[] {
+    const activeFilter = this.activeTaskFilter();
+
+    if (!activeFilter) {
+      return tasks;
+    }
+
+    return tasks.filter((task) => task.status === activeFilter);
+  }
+
+  getTaskFilterCardClasses(status: DashboardTaskStatus): string {
+    const baseClasses = 'rounded-3xl border p-6 text-left backdrop-blur transition duration-150 ease-in-out focus-visible:ring-4 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950';
+
+    if (this.isTaskFilterActive(status)) {
+      if (status === DashboardTaskStatus.Done) {
+        return `${baseClasses} border-emerald-300/40 bg-emerald-300/16 shadow-lg shadow-emerald-950/20 focus-visible:ring-emerald-200/50`;
+      }
+
+      if (status === DashboardTaskStatus.InProgress) {
+        return `${baseClasses} border-sky-300/40 bg-sky-300/16 shadow-lg shadow-sky-950/20 focus-visible:ring-sky-200/50`;
+      }
+
+      return `${baseClasses} border-amber-300/40 bg-amber-300/16 shadow-lg shadow-amber-950/20 focus-visible:ring-amber-200/50`;
+    }
+
+    if (status === DashboardTaskStatus.Done) {
+      return `${baseClasses} border-white/10 bg-white/5 hover:border-emerald-300/25 hover:bg-emerald-300/10 focus-visible:ring-emerald-200/40`;
+    }
+
+    if (status === DashboardTaskStatus.InProgress) {
+      return `${baseClasses} border-white/10 bg-white/5 hover:border-sky-300/25 hover:bg-sky-300/10 focus-visible:ring-sky-200/40`;
+    }
+
+    return `${baseClasses} border-white/10 bg-white/5 hover:border-amber-300/25 hover:bg-amber-300/10 focus-visible:ring-amber-200/40`;
   }
 
   getStatusSelectClasses(status: DashboardTaskStatus): string {

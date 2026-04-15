@@ -34,7 +34,7 @@
   },
   "dashboard": {
     "eyebrow": "Field notebook",
-    "title": "Main crop dashboard",
+    "title": "Main dashboard",
     "description": "From here you can coordinate sowing, review the status of each plot, and keep your team aligned throughout the season.",
     "sessionOk": "Session started successfully",
     "logout": "Sign out",

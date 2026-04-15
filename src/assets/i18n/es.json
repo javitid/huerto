@@ -34,7 +34,7 @@
   },
   "dashboard": {
     "eyebrow": "Cuaderno de campo",
-    "title": "Panel principal de cultivos",
+    "title": "Panel principal",
     "description": "Desde aquí puedes coordinar siembras, revisar el estado de cada parcela y mantener a tu equipo alineado durante la campaña.",
     "sessionOk": "Sesión iniciada correctamente",
     "logout": "Cerrar sesión",

@@ -1,18 +1,69 @@
-.dashboard-status-select {
-  background: rgba(15, 23, 42, 0.9);
+:host ::ng-deep .dashboard-status-select.p-select {
+  border-width: 1px;
+  border-radius: 1rem;
+  min-height: 3rem;
+  background: rgba(15, 23, 42, 0.92);
   box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.06);
+  transition: border-color 150ms ease-in-out, background-color 150ms ease-in-out, box-shadow 150ms ease-in-out;
 }
 
-.dashboard-status-select option {
-  background: #0f172a;
-  color: #f8fafc;
+:host ::ng-deep .dashboard-status-select.p-select:not(.p-disabled):hover {
+  background: rgba(15, 23, 42, 0.98);
 }
 
-.dashboard-status-select::-ms-expand {
-  display: none;
+:host ::ng-deep .dashboard-status-select.p-select .p-select-label {
+  padding: 0.75rem 1rem;
+  color: currentColor;
 }
 
-.dashboard-status-select:disabled {
+:host ::ng-deep .dashboard-status-select.p-select .p-select-dropdown {
+  width: 2.75rem;
+  color: currentColor;
+  background: rgba(2, 6, 23, 0.34);
+  border-left: 1px solid rgba(255, 255, 255, 0.1);
+  border-start-end-radius: 1rem;
+  border-end-end-radius: 1rem;
+}
+
+:host ::ng-deep .dashboard-status-select.p-select.p-focus {
+  box-shadow: 0 0 0 4px rgba(250, 204, 21, 0.18);
+}
+
+:host ::ng-deep .dashboard-status-select.p-select.p-disabled {
   opacity: 0.75;
 }
 
+:host ::ng-deep .dashboard-status-select-panel.p-select-overlay {
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: rgba(2, 6, 23, 0.98);
+  color: #f8fafc;
+  border-radius: 1rem;
+  box-shadow: 0 24px 48px rgba(2, 6, 23, 0.52);
+  backdrop-filter: blur(18px);
+}
+
+:host ::ng-deep .dashboard-status-select-panel .p-select-list {
+  gap: 0.3rem;
+  padding: 0.4rem;
+}
+
+:host ::ng-deep .dashboard-status-select-panel .p-select-option {
+  border-radius: 0.9rem;
+  background: rgba(15, 23, 42, 0.82);
+  color: #f8fafc;
+}
+
+:host ::ng-deep .dashboard-status-select-panel .p-select-option.p-focus,
+:host ::ng-deep .dashboard-status-select-panel .p-select-option:hover {
+  background: rgba(51, 65, 85, 0.88);
+  color: #f8fafc;
+}
+
+:host ::ng-deep .dashboard-status-select-panel .p-select-option.p-select-option-selected {
+  background: rgba(71, 85, 105, 0.92);
+  color: #f8fafc;
+}
+
+:host ::ng-deep .dashboard-status-select-panel .p-select-option .p-select-option-check-icon {
+  color: #a3e635;
+}
