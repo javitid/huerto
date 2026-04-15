@@ -75,7 +75,11 @@
         },
         "submit": "Guardar tarea",
         "saving": "Guardando...",
-        "success": "La tarea se ha guardado en Firestore."
+        "success": "La tarea se ha guardado en Firestore.",
+        "guest": {
+          "notice": "Has entrado como invitado. Puedes revisar las tareas, pero no crear nuevas.",
+          "error": "Los usuarios invitados no pueden crear tareas."
+        }
       },
       "emptyEyebrow": "Colección vacía",
       "emptyTitle": "Todavía no hay tareas reales en Firestore para esta cuenta.",

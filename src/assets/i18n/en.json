@@ -75,7 +75,11 @@
         },
         "submit": "Save task",
         "saving": "Saving...",
-        "success": "The task was saved in Firestore."
+        "success": "The task was saved in Firestore.",
+        "guest": {
+          "notice": "You are signed in as a guest. You can review tasks, but you cannot create new ones.",
+          "error": "Guest users cannot create tasks."
+        }
       },
       "emptyEyebrow": "Empty collection",
       "emptyTitle": "There are no real Firestore tasks for this account yet.",

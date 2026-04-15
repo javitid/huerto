@@ -55,9 +55,18 @@ export class DashboardComponent {
     return this.authService.logout();
   }
 
-  async createTask(userId: string | null): Promise<void> {
+  isGuestUser(user: User | null): boolean {
+    return !!user?.isAnonymous;
+  }
+
+  async createTask(user: User | null): Promise<void> {
     this.createTaskError.set('');
     this.createTaskSuccess.set('');
+
+    if (this.isGuestUser(user)) {
+      this.createTaskError.set(this.i18n.translate('dashboard.firestore.form.guest.error'));
+      return;
+    }
 
     const title = this.taskTitle().trim();
     const area = this.taskArea().trim();
@@ -70,7 +79,7 @@ export class DashboardComponent {
     this.createTaskPending.set(true);
 
     try {
-      await this.dashboardFirestore.createTask(userId, {
+      await this.dashboardFirestore.createTask(user?.uid ?? null, {
         title,
         area,
         status: this.taskStatus()

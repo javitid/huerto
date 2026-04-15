@@ -76,7 +76,7 @@ describe('DashboardComponent', () => {
 
   it('creates a task and clears the form on success', async () => {
     const authService = {
-      user$: new BehaviorSubject({ uid: '123' }),
+      user$: new BehaviorSubject({ uid: '123', isAnonymous: false }),
       logout: jest.fn(),
     };
     const dashboardFirestore = createDashboardFirestoreMock();
@@ -90,7 +90,7 @@ describe('DashboardComponent', () => {
     component.taskArea.set('Greenhouse');
     component.taskStatus.set(DashboardTaskStatus.InProgress);
 
-    await component.createTask('123');
+    await component.createTask({ uid: '123', isAnonymous: false } as never);
 
     expect(dashboardFirestore.createTask).toHaveBeenCalledWith('123', {
       title: 'Review irrigation',
@@ -105,7 +105,7 @@ describe('DashboardComponent', () => {
 
   it('shows a validation error when required fields are missing', async () => {
     const authService = {
-      user$: new BehaviorSubject({ uid: '123' }),
+      user$: new BehaviorSubject({ uid: '123', isAnonymous: false }),
       logout: jest.fn(),
     };
     const dashboardFirestore = createDashboardFirestoreMock();
@@ -115,10 +115,30 @@ describe('DashboardComponent', () => {
 
     const component = new DashboardComponent(authService as never, dashboardFirestore as never, i18n as never);
 
-    await component.createTask('123');
+    await component.createTask({ uid: '123', isAnonymous: false } as never);
 
     expect(dashboardFirestore.createTask).not.toHaveBeenCalled();
     expect(component.createTaskError()).toBe('translated:dashboard.firestore.errors.required');
+  });
+
+  it('does not create a task for guest users', async () => {
+    const authService = {
+      user$: new BehaviorSubject({ uid: 'guest-123', isAnonymous: true }),
+      logout: jest.fn(),
+    };
+    const dashboardFirestore = createDashboardFirestoreMock();
+    const i18n = {
+      translate: jest.fn((key: string) => `translated:${key}`)
+    };
+
+    const component = new DashboardComponent(authService as never, dashboardFirestore as never, i18n as never);
+    component.taskTitle.set('Review irrigation');
+    component.taskArea.set('Greenhouse');
+
+    await component.createTask({ uid: 'guest-123', isAnonymous: true } as never);
+
+    expect(dashboardFirestore.createTask).not.toHaveBeenCalled();
+    expect(component.createTaskError()).toBe('translated:dashboard.firestore.form.guest.error');
   });
 
   it('updates the status of a task', async () => {
