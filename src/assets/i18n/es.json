@@ -63,7 +63,7 @@
       "form": {
         "eyebrow": "Crear tarea real",
         "title": "Añade tareas a Firestore desde el panel",
-        "description": "Este formulario guarda documentos reales en users/{uid}/tasks para la cuenta autenticada. En cuanto guardes una tarea, aparecerá en la lista inferior.",
+        "description": "Este formulario guarda documentos reales en users/{uid}/tasks para la cuenta autenticada. En cuanto guardes una tarea, aparecerá en la lista.",
         "fields": {
           "title": "Título",
           "area": "Área o parcela",

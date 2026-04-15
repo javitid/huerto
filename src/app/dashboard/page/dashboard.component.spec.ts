@@ -224,4 +224,79 @@ describe('DashboardComponent', () => {
     expect(dashboardFirestore.deleteTask).toHaveBeenCalledWith('123', 'task-1');
     expect(component.taskMutationPendingId()).toBeNull();
   });
+
+  it('toggles the active task filter and keeps only one active at a time', () => {
+    const authService = {
+      user$: new BehaviorSubject({ uid: '123' }),
+      logout: jest.fn(),
+    };
+    const dashboardFirestore = createDashboardFirestoreMock();
+    const i18n = {};
+
+    const component = new DashboardComponent(authService as never, dashboardFirestore as never, i18n as never);
+
+    expect(component.activeTaskFilter()).toBeNull();
+
+    component.toggleTaskFilter(DashboardTaskStatus.Pending);
+    expect(component.activeTaskFilter()).toBe(DashboardTaskStatus.Pending);
+    expect(component.isTaskFilterActive(DashboardTaskStatus.Pending)).toBe(true);
+    expect(component.isTaskFilterActive(DashboardTaskStatus.Done)).toBe(false);
+
+    component.toggleTaskFilter(DashboardTaskStatus.Done);
+    expect(component.activeTaskFilter()).toBe(DashboardTaskStatus.Done);
+    expect(component.isTaskFilterActive(DashboardTaskStatus.Pending)).toBe(false);
+    expect(component.isTaskFilterActive(DashboardTaskStatus.Done)).toBe(true);
+
+    component.toggleTaskFilter(DashboardTaskStatus.Done);
+    expect(component.activeTaskFilter()).toBeNull();
+  });
+
+  it('returns all tasks when there is no active filter and only matching tasks when a filter is active', () => {
+    const authService = {
+      user$: new BehaviorSubject({ uid: '123' }),
+      logout: jest.fn(),
+    };
+    const dashboardFirestore = createDashboardFirestoreMock();
+    const i18n = {};
+    const tasks = [
+      createTask({ id: 'task-1', status: DashboardTaskStatus.Pending }),
+      createTask({ id: 'task-2', status: DashboardTaskStatus.InProgress }),
+      createTask({ id: 'task-3', status: DashboardTaskStatus.Done })
+    ];
+
+    const component = new DashboardComponent(authService as never, dashboardFirestore as never, i18n as never);
+
+    expect(component.getVisibleTasks(tasks)).toEqual(tasks);
+
+    component.toggleTaskFilter(DashboardTaskStatus.InProgress);
+
+    expect(component.getVisibleTasks(tasks)).toEqual([
+      expect.objectContaining({ id: 'task-2', status: DashboardTaskStatus.InProgress })
+    ]);
+  });
+
+  it('returns pressed styles for the active filter card and idle styles for the others', () => {
+    const authService = {
+      user$: new BehaviorSubject({ uid: '123' }),
+      logout: jest.fn(),
+    };
+    const dashboardFirestore = createDashboardFirestoreMock();
+    const i18n = {};
+
+    const component = new DashboardComponent(authService as never, dashboardFirestore as never, i18n as never);
+
+    const idlePendingClasses = component.getTaskFilterCardClasses(DashboardTaskStatus.Pending);
+    expect(idlePendingClasses).toContain('bg-white/5');
+    expect(idlePendingClasses).toContain('hover:border-amber-300/25');
+
+    component.toggleTaskFilter(DashboardTaskStatus.Pending);
+
+    const activePendingClasses = component.getTaskFilterCardClasses(DashboardTaskStatus.Pending);
+    const idleDoneClasses = component.getTaskFilterCardClasses(DashboardTaskStatus.Done);
+
+    expect(activePendingClasses).toContain('bg-amber-300/16');
+    expect(activePendingClasses).toContain('border-amber-300/40');
+    expect(idleDoneClasses).toContain('hover:border-emerald-300/25');
+    expect(idleDoneClasses).toContain('bg-white/5');
+  });
 });

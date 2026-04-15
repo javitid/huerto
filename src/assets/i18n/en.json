@@ -63,7 +63,7 @@
       "form": {
         "eyebrow": "Create a real task",
         "title": "Add Firestore tasks from the dashboard",
-        "description": "This form stores real documents in users/{uid}/tasks for the authenticated account. As soon as you save a task, it will appear in the list below.",
+        "description": "This form stores real documents in users/{uid}/tasks for the authenticated account. As soon as you save a task, it will appear in the list.",
         "fields": {
           "title": "Title",
           "area": "Area or plot",
