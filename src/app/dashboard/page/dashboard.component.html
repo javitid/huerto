@@ -66,23 +66,9 @@
           <h2 class="text-2xl font-bold text-white">{{ 'dashboard.firestore.title' | t }}</h2>
           <span class="rounded-full bg-lime-400/10 px-3 py-1 text-xs font-semibold uppercase tracking-[0.2em] text-lime-300">{{ 'dashboard.summaryBadge' | t }}</span>
         </div>
-        <div class="grid gap-4 sm:grid-cols-3">
-          <div class="rounded-2xl bg-slate-800 p-5">
-            <p class="text-sm text-slate-400">{{ 'dashboard.summary.pending' | t }}</p>
-            <p class="mt-3 text-2xl font-bold text-white">{{ dashboardData.pendingTasks }}</p>
-          </div>
-          <div class="rounded-2xl bg-slate-800 p-5">
-            <p class="text-sm text-slate-400">{{ 'dashboard.summary.inProgress' | t }}</p>
-            <p class="mt-3 text-2xl font-bold text-white">{{ dashboardData.inProgressTasks }}</p>
-          </div>
-          <div class="rounded-2xl bg-slate-800 p-5">
-            <p class="text-sm text-slate-400">{{ 'dashboard.summary.done' | t }}</p>
-            <p class="mt-3 text-2xl font-bold text-white">{{ dashboardData.completedTasks }}</p>
-          </div>
-        </div>
 
         @if (dashboardData.tasks.length > 0) {
-          <div class="mt-6 space-y-3">
+          <div class="space-y-3">
             @for (task of dashboardData.tasks; track task.id) {
               <div
                 class="rounded-2xl border border-white/10 bg-slate-800/80 p-4"
