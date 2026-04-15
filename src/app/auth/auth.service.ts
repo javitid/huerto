@@ -13,6 +13,7 @@ import {
   signOut
 } from 'firebase/auth';
 import { getFirebaseApp, hasFirebaseConfig } from '../firebase/firebase-app';
+import { getE2EAuthUser } from '../testing/e2e-mode';
 
 @Injectable({
   providedIn: 'root'
@@ -27,6 +28,14 @@ export class AuthService {
   readonly ready$ = this.readySubject.asObservable();
 
   constructor(private router: Router) {
+    const e2eUser = getE2EAuthUser();
+
+    if (e2eUser) {
+      this.userSubject.next(e2eUser as User);
+      this.readySubject.next(true);
+      return;
+    }
+
     if (!this.auth) {
       this.readySubject.next(true);
       return;

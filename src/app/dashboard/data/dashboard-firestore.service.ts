@@ -1,18 +1,43 @@
 import { Injectable } from '@angular/core';
 import { addDoc, collection, doc, getFirestore, onSnapshot, orderBy, query, QueryDocumentSnapshot, Timestamp, updateDoc } from 'firebase/firestore';
-import { Observable, of } from 'rxjs';
+import { BehaviorSubject, Observable, of } from 'rxjs';
 import { getFirebaseApp, hasFirebaseConfig } from '../../firebase/firebase-app';
+import { getE2EAuthUser, getE2ETasksStorageKey } from '../../testing/e2e-mode';
 import { CreateDashboardTaskInput, DashboardTask, DashboardTaskStatus, UpdateDashboardTaskInput } from '../model/dashboard.types';
 
 type FirestoreTask = Partial<DashboardTask> & { deletedAt?: unknown };
+type E2EStoredTask = DashboardTask & { deletedAt?: string | null };
 
 @Injectable({
   providedIn: 'root'
 })
 export class DashboardFirestoreService {
   private readonly firestore = hasFirebaseConfig() ? getFirestore(getFirebaseApp()) : null;
+  private readonly e2eUser = getE2EAuthUser();
+  private readonly e2eTasksSubject = new BehaviorSubject<DashboardTask[]>([]);
+
+  constructor() {
+    if (this.e2eUser) {
+      this.e2eTasksSubject.next(this.readE2ETasks(this.e2eUser.uid));
+    }
+  }
 
   async createTask(userId: string | null, task: CreateDashboardTaskInput): Promise<void> {
+    if (this.isE2EUser(userId)) {
+      const tasks = this.readE2ETasks(userId);
+
+      tasks.unshift({
+        id: `e2e-task-${Date.now()}`,
+        title: task.title.trim(),
+        area: task.area.trim(),
+        status: task.status,
+        createdAt: new Date()
+      });
+
+      this.writeE2ETasks(userId, tasks);
+      return;
+    }
+
     if (!this.firestore || !userId) {
       throw new Error('dashboard.firestore.errors.config');
     }
@@ -28,6 +53,12 @@ export class DashboardFirestoreService {
   }
 
   async updateTaskStatus(userId: string | null, taskId: string, status: DashboardTaskStatus): Promise<void> {
+    if (this.isE2EUser(userId)) {
+      const tasks = this.readE2ETasks(userId).map((task) => task.id === taskId ? { ...task, status } : task);
+      this.writeE2ETasks(userId, tasks);
+      return;
+    }
+
     if (!this.firestore || !userId) {
       throw new Error('dashboard.firestore.errors.config');
     }
@@ -40,6 +71,20 @@ export class DashboardFirestoreService {
   }
 
   async updateTask(userId: string | null, taskId: string, task: UpdateDashboardTaskInput): Promise<void> {
+    if (this.isE2EUser(userId)) {
+      const tasks = this.readE2ETasks(userId).map((currentTask) => (
+        currentTask.id === taskId
+          ? {
+              ...currentTask,
+              title: task.title.trim(),
+              area: task.area.trim()
+            }
+          : currentTask
+      ));
+      this.writeE2ETasks(userId, tasks);
+      return;
+    }
+
     if (!this.firestore || !userId) {
       throw new Error('dashboard.firestore.errors.config');
     }
@@ -53,6 +98,12 @@ export class DashboardFirestoreService {
   }
 
   async deleteTask(userId: string | null, taskId: string): Promise<void> {
+    if (this.isE2EUser(userId)) {
+      const tasks = this.readE2ETasks(userId).filter((task) => task.id !== taskId);
+      this.writeE2ETasks(userId, tasks);
+      return;
+    }
+
     if (!this.firestore || !userId) {
       throw new Error('dashboard.firestore.errors.config');
     }
@@ -65,6 +116,11 @@ export class DashboardFirestoreService {
   }
 
   watchTasks(userId: string | null): Observable<DashboardTask[]> {
+    if (this.isE2EUser(userId)) {
+      this.e2eTasksSubject.next(this.readE2ETasks(userId));
+      return this.e2eTasksSubject.asObservable();
+    }
+
     if (!this.firestore || !userId) {
       return of([]);
     }
@@ -141,5 +197,41 @@ export class DashboardFirestoreService {
 
   private isDeleted(value: unknown): boolean {
     return this.normalizeCreatedAt(value) !== null;
+  }
+
+  private isE2EUser(userId: string | null): userId is string {
+    return !!userId && userId === this.e2eUser?.uid;
+  }
+
+  private readE2ETasks(userId: string): DashboardTask[] {
+    if (typeof window === 'undefined') {
+      return [];
+    }
+
+    const rawTasks = window.localStorage.getItem(getE2ETasksStorageKey(userId));
+
+    if (!rawTasks) {
+      return [];
+    }
+
+    try {
+      const parsedTasks = JSON.parse(rawTasks) as E2EStoredTask[];
+
+      return parsedTasks.map((task) => ({
+        ...task,
+        createdAt: task.createdAt ? new Date(task.createdAt) : null
+      }));
+    } catch {
+      return [];
+    }
+  }
+
+  private writeE2ETasks(userId: string, tasks: DashboardTask[]): void {
+    if (typeof window === 'undefined') {
+      return;
+    }
+
+    window.localStorage.setItem(getE2ETasksStorageKey(userId), JSON.stringify(tasks));
+    this.e2eTasksSubject.next(tasks);
   }
 }
