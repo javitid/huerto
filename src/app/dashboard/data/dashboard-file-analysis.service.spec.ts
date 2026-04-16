@@ -1,20 +1,8 @@
-import { TestBed } from '@angular/core/testing';
-import { BrowserDynamicTestingModule, platformBrowserDynamicTesting } from '@angular/platform-browser-dynamic/testing';
 import { DASHBOARD_FILE_ANALYSIS_UID, DashboardFileAnalysisService } from './dashboard-file-analysis.service';
 
 describe('DashboardFileAnalysisService', () => {
-  beforeAll(() => {
-    TestBed.initTestEnvironment(BrowserDynamicTestingModule, platformBrowserDynamicTesting());
-  });
-
-  beforeEach(() => {
-    TestBed.configureTestingModule({
-      providers: [DashboardFileAnalysisService]
-    });
-  });
-
   it('only enables analysis for the configured user id', () => {
-    const service = TestBed.inject(DashboardFileAnalysisService);
+    const service = new DashboardFileAnalysisService();
 
     expect(service.canAnalyzeFiles(DASHBOARD_FILE_ANALYSIS_UID)).toBe(true);
     expect(service.canAnalyzeFiles('another-user')).toBe(false);
@@ -22,14 +10,14 @@ describe('DashboardFileAnalysisService', () => {
   });
 
   it('rejects files that are not pdf invoices', async () => {
-    const service = TestBed.inject(DashboardFileAnalysisService);
+    const service = new DashboardFileAnalysisService();
     const file = new File(['id,value\n1,42'], 'analysis.csv', { type: 'text/csv' });
 
     await expect(service.analyzeFile(DASHBOARD_FILE_ANALYSIS_UID, file)).rejects.toThrow('dashboard.analysis.errors.pdfOnly');
   });
 
   it('extracts key invoice fields and optimization recommendations from a pdf bill', async () => {
-    const service = TestBed.inject(DashboardFileAnalysisService);
+    const service = new DashboardFileAnalysisService();
     const file = new File(['fake pdf'], 'factura.pdf', { type: 'application/pdf' });
 
     jest.spyOn(service as any, 'extractPdfText').mockResolvedValue(
@@ -65,14 +53,14 @@ describe('DashboardFileAnalysisService', () => {
   });
 
   it('rejects analysis for users outside the allowlist', async () => {
-    const service = TestBed.inject(DashboardFileAnalysisService);
+    const service = new DashboardFileAnalysisService();
     const file = new File(['hello'], 'orchard-plan.pdf');
 
     await expect(service.analyzeFile('another-user', file)).rejects.toThrow('dashboard.analysis.errors.unauthorized');
   });
 
   it('rejects empty file names', async () => {
-    const service = TestBed.inject(DashboardFileAnalysisService);
+    const service = new DashboardFileAnalysisService();
     const file = new File(['hello'], '   ');
 
     await expect(service.analyzeFile(DASHBOARD_FILE_ANALYSIS_UID, file)).rejects.toThrow('dashboard.analysis.errors.required');
