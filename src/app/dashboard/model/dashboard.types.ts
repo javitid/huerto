@@ -29,3 +29,24 @@ export interface DashboardViewModel {
   completedTasks: number;
   tasks: DashboardTask[];
 }
+
+export interface DashboardFileAnalysisResult {
+  fileName: string;
+  analyzed: boolean;
+  message?: string;
+  fields?: Array<{
+    section?: string;
+    label: string;
+    value: string;
+  }>;
+  recommendations?: Array<{
+    title: string;
+    detail: string;
+    severity: 'high' | 'medium' | 'info';
+  }>;
+  metadata?: {
+    userId: string;
+    contentType: string;
+    size: number;
+  };
+}

@@ -107,6 +107,32 @@
         "done": "Hecha"
       }
     },
+    "analysis": {
+      "eyebrow": "Análisis privado",
+      "title": "Analizar factura de luz en PDF",
+      "description": "Esta zona solo aparece para la cuenta autorizada y extrae datos relevantes de una factura de luz en PDF para detectar posibles oportunidades de ahorro.",
+      "allowedUser": "Usuario autorizado",
+      "fileLabel": "Selecciona una factura en PDF",
+      "selectedFile": "Fichero seleccionado",
+      "submit": "Analizar factura",
+      "uploading": "Analizando...",
+      "success": "El fichero se ha analizado correctamente en local.",
+      "resultLabel": "Resultado del análisis",
+      "sections": {
+        "summary": "Resumen clave",
+        "recommendations": "Posibles optimizaciones",
+        "invoice": "Datos de factura",
+        "contract": "Contrato y suministro",
+        "consumption": "Consumo y potencia",
+        "costs": "Desglose economico"
+      },
+      "errors": {
+        "required": "Selecciona un fichero antes de analizarlo.",
+        "save": "No se pudo analizar el fichero.",
+        "pdfOnly": "Solo se admiten facturas en formato PDF.",
+        "unauthorized": "Tu cuenta no tiene permiso para analizar ficheros."
+      }
+    },
     "nextStepEyebrow": "Siguiente paso",
     "nextStepTitle": "Conectar datos agronómicos",
     "nextStepDescription": "Con la autenticación lista, el siguiente avance natural es enlazar parcelas, cultivos y registros reales desde tu backend o base de datos."

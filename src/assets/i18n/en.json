@@ -107,6 +107,32 @@
         "done": "Done"
       }
     },
+    "analysis": {
+      "eyebrow": "Private analysis",
+      "title": "Analyze electricity bill PDF",
+      "description": "This area is only shown for the authorized account and extracts the key data from an electricity bill PDF to highlight possible savings opportunities.",
+      "allowedUser": "Authorized user",
+      "fileLabel": "Select a PDF bill",
+      "selectedFile": "Selected file",
+      "submit": "Analyze bill",
+      "uploading": "Analyzing...",
+      "success": "The file was analyzed successfully in the browser.",
+      "resultLabel": "Analysis result",
+      "sections": {
+        "summary": "Key summary",
+        "recommendations": "Possible optimizations",
+        "invoice": "Invoice data",
+        "contract": "Contract and supply",
+        "consumption": "Consumption and power",
+        "costs": "Cost breakdown"
+      },
+      "errors": {
+        "required": "Select a file before analyzing it.",
+        "save": "The file could not be analyzed.",
+        "pdfOnly": "Only PDF bills are supported.",
+        "unauthorized": "Your account is not allowed to analyze files."
+      }
+    },
     "nextStepEyebrow": "Next step",
     "nextStepTitle": "Connect agronomic data",
     "nextStepDescription": "With authentication in place, the natural next step is to connect real plots, crops, and records from your backend or database."

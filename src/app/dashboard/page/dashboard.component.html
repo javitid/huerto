@@ -322,6 +322,154 @@
             {{ createTaskPending() ? ('dashboard.firestore.form.saving' | t) : ('dashboard.firestore.form.submit' | t) }}
           </button>
         </div>
+
+        @if (canUploadFiles(user)) {
+          <div class="mt-8 rounded-3xl border border-sky-300/20 bg-sky-400/10 p-6">
+            <div class="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+              <div>
+                <p class="text-sm font-semibold uppercase tracking-[0.3em] text-sky-200">{{ 'dashboard.analysis.eyebrow' | t }}</p>
+                <h3 class="mt-3 text-xl font-bold text-white">{{ 'dashboard.analysis.title' | t }}</h3>
+                <p class="mt-3 max-w-2xl text-sm leading-7 text-slate-200">{{ 'dashboard.analysis.description' | t }}</p>
+              </div>
+              <div class="rounded-2xl border border-sky-200/20 bg-slate-950/30 px-4 py-3 text-xs font-semibold uppercase tracking-[0.18em] text-sky-100">
+                {{ 'dashboard.analysis.allowedUser' | t }}
+              </div>
+            </div>
+
+            <div class="mt-6 grid gap-4 md:grid-cols-[minmax(0,1fr)_auto] md:items-end">
+              <label class="space-y-2">
+                <span class="text-sm font-semibold text-slate-100">{{ 'dashboard.analysis.fileLabel' | t }}</span>
+                <input
+                  #uploadInput
+                  type="file"
+                  accept=".pdf,application/pdf"
+                  (change)="onUploadFileSelected($event)"
+                  [disabled]="uploadPending()"
+                  [attr.data-testid]="'dashboard-upload-input'"
+                  class="block w-full rounded-2xl border border-white/10 bg-slate-800 px-4 py-3 text-sm text-slate-100 file:mr-4 file:rounded-xl file:border-0 file:bg-sky-300/20 file:px-4 file:py-2 file:text-sm file:font-semibold file:text-sky-100"
+                />
+              </label>
+
+              <button
+                type="button"
+                (click)="uploadSelectedFile(user, uploadInput)"
+                [disabled]="uploadPending()"
+                [attr.aria-busy]="uploadPending() ? 'true' : 'false'"
+                [attr.data-testid]="'dashboard-upload-submit'"
+                class="inline-flex min-h-12 items-center justify-center rounded-2xl border border-sky-200/30 bg-sky-300/15 px-5 text-sm font-bold uppercase tracking-[0.18em] text-sky-50 transition hover:bg-sky-300/25 focus-visible:ring-4 focus-visible:ring-sky-200/50 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950 disabled:cursor-not-allowed disabled:opacity-70"
+              >
+                {{ uploadPending() ? ('dashboard.analysis.uploading' | t) : ('dashboard.analysis.submit' | t) }}
+              </button>
+            </div>
+
+            <div class="mt-4 space-y-2">
+              @if (selectedUploadFile(); as uploadFile) {
+                <p class="text-sm text-slate-200">
+                  {{ 'dashboard.analysis.selectedFile' | t }}: <span class="font-semibold text-white">{{ uploadFile.name }}</span>
+                </p>
+              }
+              @if (uploadError()) {
+                <p class="rounded-2xl border border-red-400/20 bg-red-500/10 px-4 py-3 text-sm text-red-200">
+                  {{ uploadError() }}
+                </p>
+              }
+              @if (uploadSuccess()) {
+                <p class="rounded-2xl border border-sky-200/20 bg-sky-300/10 px-4 py-3 text-sm text-sky-100">
+                  {{ uploadSuccess() }}
+                </p>
+              }
+              @if (uploadResultSummary()) {
+                <p class="rounded-2xl border border-white/10 bg-slate-950/25 px-4 py-3 text-sm text-slate-100">
+                  <span class="font-semibold">{{ 'dashboard.analysis.resultLabel' | t }}:</span> {{ uploadResultSummary() }}
+                </p>
+              }
+              @if (uploadAnalysisResult(); as analysisResult) {
+                <div class="grid gap-4 pt-2 lg:grid-cols-2">
+                  <div class="rounded-3xl border border-white/10 bg-slate-950/30 p-5">
+                    <p class="text-xs font-semibold uppercase tracking-[0.22em] text-sky-200">{{ 'dashboard.analysis.sections.summary' | t }}</p>
+                    <div class="mt-4 grid gap-3">
+                      @for (field of getAnalysisFields('Resumen'); track field.label) {
+                        <div class="rounded-2xl border border-white/10 bg-white/5 p-4">
+                          <p class="text-xs font-semibold uppercase tracking-[0.18em] text-slate-400">{{ field.label }}</p>
+                          <p class="mt-2 text-lg font-bold text-white">{{ field.value }}</p>
+                        </div>
+                      }
+                    </div>
+                  </div>
+
+                  <div class="rounded-3xl border border-amber-300/20 bg-amber-300/10 p-5">
+                    <p class="text-xs font-semibold uppercase tracking-[0.22em] text-amber-100">{{ 'dashboard.analysis.sections.recommendations' | t }}</p>
+                    <div class="mt-4 space-y-3">
+                      @for (recommendation of analysisResult.recommendations ?? []; track recommendation.title) {
+                        <div
+                          class="rounded-2xl border p-4"
+                          [ngClass]="{
+                            'border-red-300/30 bg-red-500/10': recommendation.severity === 'high',
+                            'border-amber-200/30 bg-slate-950/20': recommendation.severity === 'medium',
+                            'border-sky-200/20 bg-slate-950/20': recommendation.severity === 'info'
+                          }"
+                        >
+                          <p class="text-sm font-bold text-white">{{ recommendation.title }}</p>
+                          <p class="mt-2 text-sm leading-6 text-slate-100">{{ recommendation.detail }}</p>
+                        </div>
+                      }
+                    </div>
+                  </div>
+                </div>
+
+                <div class="mt-4 grid gap-4 lg:grid-cols-3">
+                  <div class="rounded-3xl border border-white/10 bg-slate-950/30 p-5">
+                    <p class="text-xs font-semibold uppercase tracking-[0.22em] text-sky-200">{{ 'dashboard.analysis.sections.invoice' | t }}</p>
+                    <div class="mt-4 space-y-3">
+                      @for (field of getAnalysisFields('Factura'); track field.label) {
+                        <div>
+                          <p class="text-xs font-semibold uppercase tracking-[0.18em] text-slate-400">{{ field.label }}</p>
+                          <p class="mt-1 text-sm font-semibold text-white">{{ field.value }}</p>
+                        </div>
+                      }
+                    </div>
+                  </div>
+
+                  <div class="rounded-3xl border border-white/10 bg-slate-950/30 p-5">
+                    <p class="text-xs font-semibold uppercase tracking-[0.22em] text-sky-200">{{ 'dashboard.analysis.sections.contract' | t }}</p>
+                    <div class="mt-4 space-y-3">
+                      @for (field of getAnalysisFields('Contrato'); track field.label) {
+                        <div>
+                          <p class="text-xs font-semibold uppercase tracking-[0.18em] text-slate-400">{{ field.label }}</p>
+                          <p class="mt-1 text-sm font-semibold text-white">{{ field.value }}</p>
+                        </div>
+                      }
+                    </div>
+                  </div>
+
+                  <div class="rounded-3xl border border-white/10 bg-slate-950/30 p-5">
+                    <p class="text-xs font-semibold uppercase tracking-[0.22em] text-sky-200">{{ 'dashboard.analysis.sections.consumption' | t }}</p>
+                    <div class="mt-4 space-y-3">
+                      @for (field of getAnalysisFields('Consumo'); track field.label) {
+                        <div>
+                          <p class="text-xs font-semibold uppercase tracking-[0.18em] text-slate-400">{{ field.label }}</p>
+                          <p class="mt-1 text-sm font-semibold text-white">{{ field.value }}</p>
+                        </div>
+                      }
+                    </div>
+                  </div>
+                </div>
+
+                <div class="mt-4 rounded-3xl border border-white/10 bg-slate-950/30 p-5">
+                  <p class="text-xs font-semibold uppercase tracking-[0.22em] text-sky-200">{{ 'dashboard.analysis.sections.costs' | t }}</p>
+                  <div class="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
+                    @for (field of getAnalysisFields('Costes'); track field.label) {
+                      <div class="rounded-2xl border border-white/10 bg-white/5 p-4">
+                        <p class="text-xs font-semibold uppercase tracking-[0.18em] text-slate-400">{{ field.label }}</p>
+                        <p class="mt-2 text-base font-bold text-white">{{ field.value }}</p>
+                      </div>
+                    }
+                  </div>
+                </div>
+              }
+            </div>
+          </div>
+        }
       </section>
     }
   </div>

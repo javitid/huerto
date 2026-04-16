@@ -5,6 +5,14 @@ jest.mock('../../auth/auth.service', () => ({
   AuthService: class {},
 }));
 
+jest.mock('../data/dashboard-firestore.service', () => ({
+  DashboardFirestoreService: class {},
+}));
+
+jest.mock('../data/dashboard-file-analysis.service', () => ({
+  DashboardFileAnalysisService: class {},
+}));
+
 import { DashboardComponent } from './dashboard.component';
 
 describe('DashboardComponent', () => {
@@ -29,6 +37,13 @@ describe('DashboardComponent', () => {
     };
   }
 
+  function createDashboardFileAnalysisMock() {
+    return {
+      canAnalyzeFiles: jest.fn().mockReturnValue(false),
+      analyzeFile: jest.fn(),
+    };
+  }
+
   it('exposes the auth service user observable', () => {
     const user$ = new BehaviorSubject({ uid: '123' });
     const authService = {
@@ -36,9 +51,10 @@ describe('DashboardComponent', () => {
       logout: jest.fn(),
     };
     const dashboardFirestore = createDashboardFirestoreMock();
+    const dashboardFileAnalysis = createDashboardFileAnalysisMock();
     const i18n = {};
 
-    const component = new DashboardComponent(authService as never, dashboardFirestore as never, i18n as never);
+    const component = new DashboardComponent(authService as never, dashboardFirestore as never, dashboardFileAnalysis as never, i18n as never);
 
     expect(component.user$).toBe(user$);
   });
@@ -50,9 +66,10 @@ describe('DashboardComponent', () => {
       logout: jest.fn(),
     };
     const dashboardFirestore = createDashboardFirestoreMock();
+    const dashboardFileAnalysis = createDashboardFileAnalysisMock();
     const i18n = {};
 
-    const component = new DashboardComponent(authService as never, dashboardFirestore as never, i18n as never);
+    const component = new DashboardComponent(authService as never, dashboardFirestore as never, dashboardFileAnalysis as never, i18n as never);
 
     await firstValueFrom(component.dashboardData$);
 
@@ -65,9 +82,10 @@ describe('DashboardComponent', () => {
       logout: jest.fn().mockResolvedValue(undefined),
     };
     const dashboardFirestore = createDashboardFirestoreMock();
+    const dashboardFileAnalysis = createDashboardFileAnalysisMock();
     const i18n = {};
 
-    const component = new DashboardComponent(authService as never, dashboardFirestore as never, i18n as never);
+    const component = new DashboardComponent(authService as never, dashboardFirestore as never, dashboardFileAnalysis as never, i18n as never);
 
     await component.logout();
 
@@ -81,11 +99,12 @@ describe('DashboardComponent', () => {
     };
     const dashboardFirestore = createDashboardFirestoreMock();
     dashboardFirestore.createTask.mockResolvedValue(undefined);
+    const dashboardFileAnalysis = createDashboardFileAnalysisMock();
     const i18n = {
       translate: jest.fn((key: string) => `translated:${key}`)
     };
 
-    const component = new DashboardComponent(authService as never, dashboardFirestore as never, i18n as never);
+    const component = new DashboardComponent(authService as never, dashboardFirestore as never, dashboardFileAnalysis as never, i18n as never);
     component.taskTitle.set('Review irrigation');
     component.taskArea.set('Greenhouse');
     component.taskStatus.set(DashboardTaskStatus.InProgress);
@@ -109,11 +128,12 @@ describe('DashboardComponent', () => {
       logout: jest.fn(),
     };
     const dashboardFirestore = createDashboardFirestoreMock();
+    const dashboardFileAnalysis = createDashboardFileAnalysisMock();
     const i18n = {
       translate: jest.fn((key: string) => `translated:${key}`)
     };
 
-    const component = new DashboardComponent(authService as never, dashboardFirestore as never, i18n as never);
+    const component = new DashboardComponent(authService as never, dashboardFirestore as never, dashboardFileAnalysis as never, i18n as never);
 
     await component.createTask({ uid: '123', isAnonymous: false } as never);
 
@@ -127,11 +147,12 @@ describe('DashboardComponent', () => {
       logout: jest.fn(),
     };
     const dashboardFirestore = createDashboardFirestoreMock();
+    const dashboardFileAnalysis = createDashboardFileAnalysisMock();
     const i18n = {
       translate: jest.fn((key: string) => `translated:${key}`)
     };
 
-    const component = new DashboardComponent(authService as never, dashboardFirestore as never, i18n as never);
+    const component = new DashboardComponent(authService as never, dashboardFirestore as never, dashboardFileAnalysis as never, i18n as never);
     component.taskTitle.set('Review irrigation');
     component.taskArea.set('Greenhouse');
 
@@ -148,11 +169,12 @@ describe('DashboardComponent', () => {
     };
     const dashboardFirestore = createDashboardFirestoreMock();
     dashboardFirestore.updateTaskStatus.mockResolvedValue(undefined);
+    const dashboardFileAnalysis = createDashboardFileAnalysisMock();
     const i18n = {
       translate: jest.fn((key: string) => `translated:${key}`)
     };
 
-    const component = new DashboardComponent(authService as never, dashboardFirestore as never, i18n as never);
+    const component = new DashboardComponent(authService as never, dashboardFirestore as never, dashboardFileAnalysis as never, i18n as never);
 
     await component.updateTaskStatus('123', 'task-1', DashboardTaskStatus.Done);
 
@@ -167,11 +189,12 @@ describe('DashboardComponent', () => {
     };
     const dashboardFirestore = createDashboardFirestoreMock();
     dashboardFirestore.updateTask.mockResolvedValue(undefined);
+    const dashboardFileAnalysis = createDashboardFileAnalysisMock();
     const i18n = {
       translate: jest.fn((key: string) => `translated:${key}`)
     };
 
-    const component = new DashboardComponent(authService as never, dashboardFirestore as never, i18n as never);
+    const component = new DashboardComponent(authService as never, dashboardFirestore as never, dashboardFileAnalysis as never, i18n as never);
     component.startEditingTask(createTask({ title: 'Old title', area: 'Old area' }));
     component.editTaskTitle.set('New title');
     component.editTaskArea.set('New area');
@@ -191,11 +214,12 @@ describe('DashboardComponent', () => {
       logout: jest.fn(),
     };
     const dashboardFirestore = createDashboardFirestoreMock();
+    const dashboardFileAnalysis = createDashboardFileAnalysisMock();
     const i18n = {
       translate: jest.fn((key: string) => `translated:${key}`)
     };
 
-    const component = new DashboardComponent(authService as never, dashboardFirestore as never, i18n as never);
+    const component = new DashboardComponent(authService as never, dashboardFirestore as never, dashboardFileAnalysis as never, i18n as never);
     component.startEditingTask(createTask());
     component.editTaskTitle.set(' ');
     component.editTaskArea.set(' ');
@@ -213,11 +237,12 @@ describe('DashboardComponent', () => {
     };
     const dashboardFirestore = createDashboardFirestoreMock();
     dashboardFirestore.deleteTask.mockResolvedValue(undefined);
+    const dashboardFileAnalysis = createDashboardFileAnalysisMock();
     const i18n = {
       translate: jest.fn((key: string) => `translated:${key}`)
     };
 
-    const component = new DashboardComponent(authService as never, dashboardFirestore as never, i18n as never);
+    const component = new DashboardComponent(authService as never, dashboardFirestore as never, dashboardFileAnalysis as never, i18n as never);
 
     await component.deleteTask('123', 'task-1');
 
@@ -231,9 +256,10 @@ describe('DashboardComponent', () => {
       logout: jest.fn(),
     };
     const dashboardFirestore = createDashboardFirestoreMock();
+    const dashboardFileAnalysis = createDashboardFileAnalysisMock();
     const i18n = {};
 
-    const component = new DashboardComponent(authService as never, dashboardFirestore as never, i18n as never);
+    const component = new DashboardComponent(authService as never, dashboardFirestore as never, dashboardFileAnalysis as never, i18n as never);
 
     expect(component.activeTaskFilter()).toBeNull();
 
@@ -257,6 +283,7 @@ describe('DashboardComponent', () => {
       logout: jest.fn(),
     };
     const dashboardFirestore = createDashboardFirestoreMock();
+    const dashboardFileAnalysis = createDashboardFileAnalysisMock();
     const i18n = {};
     const tasks = [
       createTask({ id: 'task-1', status: DashboardTaskStatus.Pending }),
@@ -264,7 +291,7 @@ describe('DashboardComponent', () => {
       createTask({ id: 'task-3', status: DashboardTaskStatus.Done })
     ];
 
-    const component = new DashboardComponent(authService as never, dashboardFirestore as never, i18n as never);
+    const component = new DashboardComponent(authService as never, dashboardFirestore as never, dashboardFileAnalysis as never, i18n as never);
 
     expect(component.getVisibleTasks(tasks)).toEqual(tasks);
 
@@ -281,9 +308,10 @@ describe('DashboardComponent', () => {
       logout: jest.fn(),
     };
     const dashboardFirestore = createDashboardFirestoreMock();
+    const dashboardFileAnalysis = createDashboardFileAnalysisMock();
     const i18n = {};
 
-    const component = new DashboardComponent(authService as never, dashboardFirestore as never, i18n as never);
+    const component = new DashboardComponent(authService as never, dashboardFirestore as never, dashboardFileAnalysis as never, i18n as never);
 
     const idlePendingClasses = component.getTaskFilterCardClasses(DashboardTaskStatus.Pending);
     expect(idlePendingClasses).toContain('bg-white/5');
@@ -298,5 +326,78 @@ describe('DashboardComponent', () => {
     expect(activePendingClasses).toContain('border-amber-300/40');
     expect(idleDoneClasses).toContain('hover:border-emerald-300/25');
     expect(idleDoneClasses).toContain('bg-white/5');
+  });
+
+  it('only enables file uploads for the configured uploader uid', () => {
+    const authService = {
+      user$: new BehaviorSubject({ uid: '123' }),
+      logout: jest.fn(),
+    };
+    const dashboardFirestore = createDashboardFirestoreMock();
+    const dashboardFileAnalysis = createDashboardFileAnalysisMock();
+    dashboardFileAnalysis.canAnalyzeFiles.mockImplementation((userId: string | null) => userId === 'XuOjXcOBssPwJxdcPzzmf0VoP0r1');
+    const i18n = {};
+
+    const component = new DashboardComponent(authService as never, dashboardFirestore as never, dashboardFileAnalysis as never, i18n as never);
+
+    expect(component.canUploadFiles({ uid: 'XuOjXcOBssPwJxdcPzzmf0VoP0r1' } as never)).toBe(true);
+    expect(component.canUploadFiles({ uid: 'other-user' } as never)).toBe(false);
+  });
+
+  it('uploads the selected file for the allowed user and clears the selection', async () => {
+    const authService = {
+      user$: new BehaviorSubject({ uid: 'XuOjXcOBssPwJxdcPzzmf0VoP0r1' }),
+      logout: jest.fn(),
+    };
+    const dashboardFirestore = createDashboardFirestoreMock();
+    const dashboardFileAnalysis = createDashboardFileAnalysisMock();
+    dashboardFileAnalysis.canAnalyzeFiles.mockReturnValue(true);
+    dashboardFileAnalysis.analyzeFile.mockResolvedValue({
+      fileName: 'orchard-plan.pdf',
+      analyzed: true,
+      message: 'Resumen listo',
+      fields: [{ section: 'Resumen', label: 'Total factura', value: '82,82 €' }]
+    });
+    const i18n = {
+      translate: jest.fn((key: string) => `translated:${key}`)
+    };
+
+    const component = new DashboardComponent(authService as never, dashboardFirestore as never, dashboardFileAnalysis as never, i18n as never);
+    const file = new File(['hello'], 'orchard-plan.pdf');
+    const input = { value: 'occupied' } as HTMLInputElement;
+    const files = {
+      item: jest.fn().mockReturnValue(file)
+    } as unknown as FileList;
+
+    component.onUploadFileSelected({ target: { files } } as unknown as Event);
+    await component.uploadSelectedFile({ uid: 'XuOjXcOBssPwJxdcPzzmf0VoP0r1' } as never, input);
+
+    expect(dashboardFileAnalysis.analyzeFile).toHaveBeenCalledWith('XuOjXcOBssPwJxdcPzzmf0VoP0r1', file);
+    expect(component.selectedUploadFile()).toBeNull();
+    expect(input.value).toBe('');
+    expect(component.uploadSuccess()).toBe('translated:dashboard.analysis.success');
+    expect(component.uploadResultSummary()).toBe('Resumen listo');
+    expect(component.getAnalysisFields('Resumen')).toEqual([{ label: 'Total factura', value: '82,82 €', section: 'Resumen' }]);
+  });
+
+  it('shows an upload error for users outside the allowlist', async () => {
+    const authService = {
+      user$: new BehaviorSubject({ uid: 'other-user' }),
+      logout: jest.fn(),
+    };
+    const dashboardFirestore = createDashboardFirestoreMock();
+    const dashboardFileAnalysis = createDashboardFileAnalysisMock();
+    dashboardFileAnalysis.canAnalyzeFiles.mockReturnValue(false);
+    const i18n = {
+      translate: jest.fn((key: string) => `translated:${key}`)
+    };
+
+    const component = new DashboardComponent(authService as never, dashboardFirestore as never, dashboardFileAnalysis as never, i18n as never);
+    component.selectedUploadFile.set(new File(['hello'], 'orchard-plan.pdf'));
+
+    await component.uploadSelectedFile({ uid: 'other-user' } as never);
+
+    expect(dashboardFileAnalysis.analyzeFile).not.toHaveBeenCalled();
+    expect(component.uploadError()).toBe('translated:dashboard.analysis.errors.unauthorized');
   });
 });

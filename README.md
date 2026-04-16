@@ -218,6 +218,25 @@ No subas:
 - `src/environments/environment.local.ts`
 - claves privadas de servidor
 - service accounts
+
+## Análisis de ficheros en frontend
+
+El dashboard incluye una zona privada de análisis de ficheros visible solo para el usuario `XuOjXcOBssPwJxdcPzzmf0VoP0r1`.
+
+Ese análisis se hace directamente en el navegador:
+
+- no necesita Cloud Functions
+- no requiere cambiar el proyecto a Blaze
+- no persiste el fichero por defecto
+- y es adecuado para CSV, JSON, TXT y revisiones ligeras del contenido
+
+El flujo actual devuelve un resumen simple del fichero seleccionado, por ejemplo:
+
+- filas y columnas para CSV
+- claves principales para JSON
+- líneas y palabras aproximadas para texto plano
+
+No hace falta configurar ningún endpoint adicional para usar esta funcionalidad.
 - secretos de backend
 
 `environment.local.ts` ya está en `.gitignore`.

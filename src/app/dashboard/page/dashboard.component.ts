@@ -4,7 +4,8 @@ import { User } from 'firebase/auth';
 import { AuthService } from '../../auth/auth.service';
 import { I18nService } from '../../i18n/i18n.service';
 import { DashboardFirestoreService } from '../data/dashboard-firestore.service';
-import { DashboardTask, DashboardTaskStatus, DashboardViewModel } from '../model/dashboard.types';
+import { DashboardFileAnalysisService } from '../data/dashboard-file-analysis.service';
+import { DashboardFileAnalysisResult, DashboardTask, DashboardTaskStatus, DashboardViewModel } from '../model/dashboard.types';
 
 @Component({
     selector: 'app-dashboard',
@@ -33,10 +34,17 @@ export class DashboardComponent {
   readonly editTaskTitle = signal('');
   readonly editTaskArea = signal('');
   readonly activeTaskFilter = signal<DashboardTaskStatus | null>(null);
+  readonly selectedUploadFile = signal<File | null>(null);
+  readonly uploadPending = signal(false);
+  readonly uploadError = signal('');
+  readonly uploadSuccess = signal('');
+  readonly uploadResultSummary = signal('');
+  readonly uploadAnalysisResult = signal<DashboardFileAnalysisResult | null>(null);
 
   constructor(
     private authService: AuthService,
     private dashboardFirestore: DashboardFirestoreService,
+    private dashboardFileAnalysis: DashboardFileAnalysisService,
     public i18n: I18nService
   ) {
     this.user$ = this.authService.user$;
@@ -63,6 +71,10 @@ export class DashboardComponent {
 
   isGuestUser(user: User | null): boolean {
     return !!user?.isAnonymous;
+  }
+
+  canUploadFiles(user: User | null): boolean {
+    return this.dashboardFileAnalysis.canAnalyzeFiles(user?.uid ?? null);
   }
 
   async createTask(user: User | null): Promise<void> {
@@ -103,6 +115,61 @@ export class DashboardComponent {
     } finally {
       this.createTaskPending.set(false);
     }
+  }
+
+  onUploadFileSelected(event: Event): void {
+    const input = event.target as HTMLInputElement | null;
+    const file = input?.files?.item(0) ?? null;
+
+    this.uploadError.set('');
+    this.uploadSuccess.set('');
+    this.uploadResultSummary.set('');
+    this.uploadAnalysisResult.set(null);
+    this.selectedUploadFile.set(file);
+  }
+
+  async uploadSelectedFile(user: User | null, input?: HTMLInputElement): Promise<void> {
+    this.uploadError.set('');
+    this.uploadSuccess.set('');
+    this.uploadResultSummary.set('');
+    this.uploadAnalysisResult.set(null);
+
+    if (!this.canUploadFiles(user)) {
+      this.uploadError.set(this.i18n.translate('dashboard.analysis.errors.unauthorized'));
+      return;
+    }
+
+    const file = this.selectedUploadFile();
+
+    if (!file) {
+      this.uploadError.set(this.i18n.translate('dashboard.analysis.errors.required'));
+      return;
+    }
+
+    this.uploadPending.set(true);
+
+    try {
+      const result = await this.dashboardFileAnalysis.analyzeFile(user?.uid ?? null, file);
+      this.selectedUploadFile.set(null);
+      if (input) {
+        input.value = '';
+      }
+      this.uploadSuccess.set(this.i18n.translate('dashboard.analysis.success'));
+      this.uploadResultSummary.set(result.message || '');
+      this.uploadAnalysisResult.set(result);
+    } catch (error) {
+      this.uploadError.set(
+        error instanceof Error
+          ? this.i18n.translate(error.message)
+          : this.i18n.translate('dashboard.analysis.errors.save')
+      );
+    } finally {
+      this.uploadPending.set(false);
+    }
+  }
+
+  getAnalysisFields(section: string): Array<{ label: string; value: string }> {
+    return this.uploadAnalysisResult()?.fields?.filter((field) => field.section === section) ?? [];
   }
 
   setTaskStatus(status: string): void {
