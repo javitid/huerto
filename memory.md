@@ -15,6 +15,7 @@
 
 - When a new architectural or styling rule becomes important, update documentation in `.github/copilot-instructions.md` and/or `README.md`.
 - Keep this `memory.md` updated with reusable project conventions discovered during implementation work.
+- Reusable parallel-work instructions live under `.agents/`, including `coordinator`, `gherkin-playwright`, `unit-tests`, and `app-integration`.
 
 ## Release Habit
 
