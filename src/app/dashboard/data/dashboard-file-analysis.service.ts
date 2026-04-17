@@ -1,9 +1,11 @@
 import { Injectable } from '@angular/core';
 import { User } from 'firebase/auth';
 import { environment } from '../../../environments/environment';
+import { getE2EAuthUser } from '../../testing/e2e-mode';
 import { DashboardFileAnalysisResult } from '../model/dashboard.types';
 
 export const DASHBOARD_FILE_ANALYSIS_EMAIL = 'AUTHORIZED_GOOGLE_EMAIL';
+export const DASHBOARD_FILE_ANALYSIS_E2E_EMAIL = 'file-analysis@huerto.local';
 
 @Injectable({
   providedIn: 'root'
@@ -14,6 +16,10 @@ export class DashboardFileAnalysisService {
     const allowedEmails = environment.fileAnalysis.allowedEmails
       .map((value) => value.trim().toLowerCase())
       .filter((value) => value.length > 0 && value !== DASHBOARD_FILE_ANALYSIS_EMAIL.toLowerCase());
+
+    if (getE2EAuthUser()) {
+      allowedEmails.push(DASHBOARD_FILE_ANALYSIS_E2E_EMAIL);
+    }
 
     return allowedEmails.includes(userEmail);
   }

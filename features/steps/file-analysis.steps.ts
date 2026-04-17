@@ -7,7 +7,7 @@ const { Given, When, Then } = createBdd();
 const E2E_AUTHORIZED_FILE_ANALYSIS_USER = {
   uid: 'XuOjXcOBssPwJxdcPzzmf0VoP0r1',
   displayName: 'Usuario análisis e2e',
-  email: 'file-analysis@huerto.local',
+  email: 'javitid@gmail.com',
   isAnonymous: false
 } as const;
 

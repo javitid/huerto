@@ -6,7 +6,12 @@ jest.mock('../../../environments/environment', () => ({
   }
 }));
 
+jest.mock('../../testing/e2e-mode', () => ({
+  getE2EAuthUser: jest.fn().mockReturnValue(null)
+}));
+
 import { DashboardFileAnalysisService } from './dashboard-file-analysis.service';
+import { getE2EAuthUser } from '../../testing/e2e-mode';
 
 describe('DashboardFileAnalysisService', () => {
   it('only enables analysis for configured emails', () => {
@@ -15,6 +20,18 @@ describe('DashboardFileAnalysisService', () => {
     expect(service.canAnalyzeFiles({ uid: 'another-user', email: 'file-analysis@huerto.local' } as never)).toBe(true);
     expect(service.canAnalyzeFiles({ uid: 'another-user', email: 'otro@huerto.local' } as never)).toBe(false);
     expect(service.canAnalyzeFiles(null)).toBe(false);
+  });
+
+  it('enables analysis for the e2e email when e2e mode is active', () => {
+    const service = new DashboardFileAnalysisService();
+    jest.mocked(getE2EAuthUser).mockReturnValue({
+      uid: 'e2e-user',
+      displayName: 'Usuario e2e',
+      email: 'file-analysis@huerto.local',
+      isAnonymous: false
+    });
+
+    expect(service.canAnalyzeFiles({ uid: 'another-user', email: 'file-analysis@huerto.local' } as never)).toBe(true);
   });
 
   it('rejects files that are not pdf invoices', async () => {
