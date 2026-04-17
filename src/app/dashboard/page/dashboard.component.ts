@@ -74,7 +74,7 @@ export class DashboardComponent {
   }
 
   canUploadFiles(user: User | null): boolean {
-    return this.dashboardFileAnalysis.canAnalyzeFiles(user?.uid ?? null);
+    return this.dashboardFileAnalysis.canAnalyzeFiles(user);
   }
 
   async createTask(user: User | null): Promise<void> {
@@ -149,7 +149,7 @@ export class DashboardComponent {
     this.uploadPending.set(true);
 
     try {
-      const result = await this.dashboardFileAnalysis.analyzeFile(user?.uid ?? null, file);
+      const result = await this.dashboardFileAnalysis.analyzeFile(user, file);
       this.selectedUploadFile.set(null);
       if (input) {
         input.value = '';

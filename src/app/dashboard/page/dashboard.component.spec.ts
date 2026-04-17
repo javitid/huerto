@@ -328,25 +328,25 @@ describe('DashboardComponent', () => {
     expect(idleDoneClasses).toContain('bg-white/5');
   });
 
-  it('only enables file uploads for the configured uploader uid', () => {
+  it('only enables file uploads for the configured uploader', () => {
     const authService = {
       user$: new BehaviorSubject({ uid: '123' }),
       logout: jest.fn(),
     };
     const dashboardFirestore = createDashboardFirestoreMock();
     const dashboardFileAnalysis = createDashboardFileAnalysisMock();
-    dashboardFileAnalysis.canAnalyzeFiles.mockImplementation((userId: string | null) => userId === 'XuOjXcOBssPwJxdcPzzmf0VoP0r1');
+    dashboardFileAnalysis.canAnalyzeFiles.mockImplementation((user: { email?: string | null } | null) => user?.email === 'file-analysis@huerto.local');
     const i18n = {};
 
     const component = new DashboardComponent(authService as never, dashboardFirestore as never, dashboardFileAnalysis as never, i18n as never);
 
-    expect(component.canUploadFiles({ uid: 'XuOjXcOBssPwJxdcPzzmf0VoP0r1' } as never)).toBe(true);
-    expect(component.canUploadFiles({ uid: 'other-user' } as never)).toBe(false);
+    expect(component.canUploadFiles({ uid: 'XuOjXcOBssPwJxdcPzzmf0VoP0r1', email: 'file-analysis@huerto.local' } as never)).toBe(true);
+    expect(component.canUploadFiles({ uid: 'other-user', email: 'other@huerto.local' } as never)).toBe(false);
   });
 
   it('uploads the selected file for the allowed user and clears the selection', async () => {
     const authService = {
-      user$: new BehaviorSubject({ uid: 'XuOjXcOBssPwJxdcPzzmf0VoP0r1' }),
+      user$: new BehaviorSubject({ uid: 'XuOjXcOBssPwJxdcPzzmf0VoP0r1', email: 'file-analysis@huerto.local' }),
       logout: jest.fn(),
     };
     const dashboardFirestore = createDashboardFirestoreMock();
@@ -370,9 +370,9 @@ describe('DashboardComponent', () => {
     } as unknown as FileList;
 
     component.onUploadFileSelected({ target: { files } } as unknown as Event);
-    await component.uploadSelectedFile({ uid: 'XuOjXcOBssPwJxdcPzzmf0VoP0r1' } as never, input);
+    await component.uploadSelectedFile({ uid: 'XuOjXcOBssPwJxdcPzzmf0VoP0r1', email: 'file-analysis@huerto.local' } as never, input);
 
-    expect(dashboardFileAnalysis.analyzeFile).toHaveBeenCalledWith('XuOjXcOBssPwJxdcPzzmf0VoP0r1', file);
+    expect(dashboardFileAnalysis.analyzeFile).toHaveBeenCalledWith({ uid: 'XuOjXcOBssPwJxdcPzzmf0VoP0r1', email: 'file-analysis@huerto.local' }, file);
     expect(component.selectedUploadFile()).toBeNull();
     expect(input.value).toBe('');
     expect(component.uploadSuccess()).toBe('translated:dashboard.analysis.success');
@@ -382,7 +382,7 @@ describe('DashboardComponent', () => {
 
   it('shows an upload error for users outside the allowlist', async () => {
     const authService = {
-      user$: new BehaviorSubject({ uid: 'other-user' }),
+      user$: new BehaviorSubject({ uid: 'other-user', email: 'other@huerto.local' }),
       logout: jest.fn(),
     };
     const dashboardFirestore = createDashboardFirestoreMock();
@@ -395,7 +395,7 @@ describe('DashboardComponent', () => {
     const component = new DashboardComponent(authService as never, dashboardFirestore as never, dashboardFileAnalysis as never, i18n as never);
     component.selectedUploadFile.set(new File(['hello'], 'orchard-plan.pdf'));
 
-    await component.uploadSelectedFile({ uid: 'other-user' } as never);
+    await component.uploadSelectedFile({ uid: 'other-user', email: 'other@huerto.local' } as never);
 
     expect(dashboardFileAnalysis.analyzeFile).not.toHaveBeenCalled();
     expect(component.uploadError()).toBe('translated:dashboard.analysis.errors.unauthorized');

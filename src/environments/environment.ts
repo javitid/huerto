@@ -11,6 +11,9 @@ export const environment = {
     appId: 'FIREBASE_APP_ID',
     messagingSenderId: 'FIREBASE_MESSAGING_SENDER_ID',
     storageBucket: 'FIREBASE_STORAGE_BUCKET'
+  },
+  fileAnalysis: {
+    allowedEmails: ['AUTHORIZED_GOOGLE_EMAIL']
   }
 };
 

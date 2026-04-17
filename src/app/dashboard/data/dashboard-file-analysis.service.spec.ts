@@ -1,11 +1,19 @@
-import { DASHBOARD_FILE_ANALYSIS_UID, DashboardFileAnalysisService } from './dashboard-file-analysis.service';
+jest.mock('../../../environments/environment', () => ({
+  environment: {
+    fileAnalysis: {
+      allowedEmails: ['file-analysis@huerto.local']
+    }
+  }
+}));
+
+import { DashboardFileAnalysisService } from './dashboard-file-analysis.service';
 
 describe('DashboardFileAnalysisService', () => {
-  it('only enables analysis for the configured user id', () => {
+  it('only enables analysis for configured emails', () => {
     const service = new DashboardFileAnalysisService();
 
-    expect(service.canAnalyzeFiles(DASHBOARD_FILE_ANALYSIS_UID)).toBe(true);
-    expect(service.canAnalyzeFiles('another-user')).toBe(false);
+    expect(service.canAnalyzeFiles({ uid: 'another-user', email: 'file-analysis@huerto.local' } as never)).toBe(true);
+    expect(service.canAnalyzeFiles({ uid: 'another-user', email: 'otro@huerto.local' } as never)).toBe(false);
     expect(service.canAnalyzeFiles(null)).toBe(false);
   });
 
@@ -13,7 +21,7 @@ describe('DashboardFileAnalysisService', () => {
     const service = new DashboardFileAnalysisService();
     const file = new File(['id,value\n1,42'], 'analysis.csv', { type: 'text/csv' });
 
-    await expect(service.analyzeFile(DASHBOARD_FILE_ANALYSIS_UID, file)).rejects.toThrow('dashboard.analysis.errors.pdfOnly');
+    await expect(service.analyzeFile({ uid: 'another-user', email: 'file-analysis@huerto.local' } as never, file)).rejects.toThrow('dashboard.analysis.errors.pdfOnly');
   });
 
   it('extracts key invoice fields and optimization recommendations from a pdf bill', async () => {
@@ -33,7 +41,7 @@ describe('DashboardFileAnalysisService', () => {
       'Potencia 53,81 € Energía 10,64 € Descuentos -1,06 € Otros 1,79 € Impuestos 17,64 €'
     );
 
-    const result = await service.analyzeFile(DASHBOARD_FILE_ANALYSIS_UID, file);
+    const result = await service.analyzeFile({ uid: 'another-user', email: 'file-analysis@huerto.local' } as never, file);
 
     expect(result.message).toContain('Factura analizada');
     expect(result.fields).toEqual(
@@ -56,13 +64,13 @@ describe('DashboardFileAnalysisService', () => {
     const service = new DashboardFileAnalysisService();
     const file = new File(['hello'], 'orchard-plan.pdf');
 
-    await expect(service.analyzeFile('another-user', file)).rejects.toThrow('dashboard.analysis.errors.unauthorized');
+    await expect(service.analyzeFile({ uid: 'another-user', email: 'otro@huerto.local' } as never, file)).rejects.toThrow('dashboard.analysis.errors.unauthorized');
   });
 
   it('rejects empty file names', async () => {
     const service = new DashboardFileAnalysisService();
     const file = new File(['hello'], '   ');
 
-    await expect(service.analyzeFile(DASHBOARD_FILE_ANALYSIS_UID, file)).rejects.toThrow('dashboard.analysis.errors.required');
+    await expect(service.analyzeFile({ uid: 'another-user', email: 'file-analysis@huerto.local' } as never, file)).rejects.toThrow('dashboard.analysis.errors.required');
   });
 });

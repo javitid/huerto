@@ -1,22 +1,29 @@
 import { Injectable } from '@angular/core';
+import { User } from 'firebase/auth';
+import { environment } from '../../../environments/environment';
 import { DashboardFileAnalysisResult } from '../model/dashboard.types';
 
-export const DASHBOARD_FILE_ANALYSIS_UID = 'XuOjXcOBssPwJxdcPzzmf0VoP0r1';
+export const DASHBOARD_FILE_ANALYSIS_EMAIL = 'AUTHORIZED_GOOGLE_EMAIL';
 
 @Injectable({
   providedIn: 'root'
 })
 export class DashboardFileAnalysisService {
-  canAnalyzeFiles(userId: string | null): boolean {
-    return userId === DASHBOARD_FILE_ANALYSIS_UID;
+  canAnalyzeFiles(user: Pick<User, 'uid' | 'email'> | null): boolean {
+    const userEmail = user?.email?.trim().toLowerCase() ?? '';
+    const allowedEmails = environment.fileAnalysis.allowedEmails
+      .map((value) => value.trim().toLowerCase())
+      .filter((value) => value.length > 0 && value !== DASHBOARD_FILE_ANALYSIS_EMAIL.toLowerCase());
+
+    return allowedEmails.includes(userEmail);
   }
 
-  async analyzeFile(userId: string | null, file: File): Promise<DashboardFileAnalysisResult> {
-    if (!this.canAnalyzeFiles(userId)) {
+  async analyzeFile(user: Pick<User, 'uid' | 'email'> | null, file: File): Promise<DashboardFileAnalysisResult> {
+    if (!this.canAnalyzeFiles(user)) {
       throw new Error('dashboard.analysis.errors.unauthorized');
     }
 
-    const normalizedUserId = userId ?? '';
+    const normalizedUserId = user?.uid ?? '';
     const normalizedName = file.name.trim();
 
     if (!normalizedName) {
