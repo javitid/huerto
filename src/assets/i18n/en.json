@@ -58,6 +58,31 @@
       "inProgress": "In progress",
       "done": "Done"
     },
+    "chart": {
+      "eyebrow": "Ignite UI example",
+      "title": "Daily task status",
+      "description": "This chart uses Ignite UI to show how many tasks exist per day and by type, with the date on the X axis and the task count on the Y axis.",
+      "chartTitle": "Tasks by day",
+      "subtitle": "Three lines for Pending, In progress, and Done",
+      "xAxisTitle": "Date",
+      "yAxisTitle": "Task count",
+      "legend": {
+        "dailyState": "Series by status",
+        "yAxisHint": "Y axis: 0 to 5 tasks"
+      },
+      "tooltip": {
+        "dayLabel": "Date",
+        "statusLabel": "Status"
+      },
+      "zoom": {
+        "in": "Zoom +",
+        "out": "Zoom -"
+      },
+      "defaultSeriesLabel": "General",
+      "emptyEyebrow": "No data to draw",
+      "emptyTitle": "There are not enough dated tasks yet to render the series.",
+      "emptyDescription": "Once real tasks with `createdAt` exist, this section will display the daily evolution of their status."
+    },
     "firestore": {
       "title": "Tasks connected to Firestore",
       "form": {

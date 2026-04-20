@@ -58,6 +58,31 @@
       "inProgress": "En curso",
       "done": "Hechas"
     },
+    "chart": {
+      "eyebrow": "Ejemplo con Ignite UI",
+      "title": "Estado diario de tareas",
+      "description": "Este gráfico usa Ignite UI para mostrar cuántas tareas hay por día y por tipo, con la fecha en el eje X y el número de tareas en el eje Y.",
+      "chartTitle": "Tareas por día",
+      "subtitle": "Tres líneas para Pendiente, En curso y Hecha",
+      "xAxisTitle": "Fecha",
+      "yAxisTitle": "Número de tareas",
+      "legend": {
+        "dailyState": "Series por estado",
+        "yAxisHint": "Eje Y: 0 a 5 tareas"
+      },
+      "tooltip": {
+        "dayLabel": "Fecha",
+        "statusLabel": "Estado"
+      },
+      "zoom": {
+        "in": "Zoom +",
+        "out": "Zoom -"
+      },
+      "defaultSeriesLabel": "General",
+      "emptyEyebrow": "Sin datos para pintar",
+      "emptyTitle": "Todavía no hay tareas con fecha suficiente para mostrar la serie.",
+      "emptyDescription": "Cuando existan tareas reales con `createdAt`, aquí verás la evolución diaria de su estado."
+    },
     "firestore": {
       "title": "Tareas conectadas con Firestore",
       "form": {
