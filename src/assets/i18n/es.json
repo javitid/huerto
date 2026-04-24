@@ -132,6 +132,11 @@
         "done": "Hecha"
       }
     },
+    "analysisTemporarilyHidden": {
+      "eyebrow": "Temporalmente oculto",
+      "title": "El análisis de facturas está desactivado por ahora",
+      "description": "He ocultado esta parte de la interfaz temporalmente para que no aparezca en el panel mientras trabajamos en otros cambios."
+    },
     "analysis": {
       "eyebrow": "Análisis privado",
       "title": "Analizar factura de luz en PDF",

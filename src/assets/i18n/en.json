@@ -132,6 +132,11 @@
         "done": "Done"
       }
     },
+    "analysisTemporarilyHidden": {
+      "eyebrow": "Temporarily hidden",
+      "title": "Invoice analysis is disabled for now",
+      "description": "I have hidden this part of the interface temporarily so it does not appear in the dashboard while we work on other changes."
+    },
     "analysis": {
       "eyebrow": "Private analysis",
       "title": "Analyze electricity bill PDF",
