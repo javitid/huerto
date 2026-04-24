@@ -23,6 +23,7 @@ Own application behavior, functional changes, and integration work across the An
 - Refactor app code safely
 - Add or adjust integration points needed by tests or E2E
 - Preserve compatibility with existing routes, selectors, and user flows when possible
+- Keep changed app code and Angular templates passing `npm run lint`
 
 ## Do Not Own
 
@@ -40,3 +41,4 @@ Own application behavior, functional changes, and integration work across the An
 
 - Keep behavioral changes localized and explicit.
 - When changing app code that supports E2E, document the impact so the Gherkin/Playwright agent can update scenarios if needed.
+- Use `npm run lint` as the default fast validation for `src/app/**` changes before handing work back.

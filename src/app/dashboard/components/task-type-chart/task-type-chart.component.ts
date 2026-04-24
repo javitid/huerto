@@ -1,8 +1,8 @@
-import { Component, Input, OnChanges, SimpleChanges, ViewChild } from '@angular/core';
-import { CategoryChartType, IgxCategoryChartComponent, ToolTipType } from 'igniteui-angular-charts';
-import { IgRect } from 'igniteui-angular-core';
+import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
+import { ChartData, ChartDataset, ChartOptions, TooltipItem } from 'chart.js';
 import { DashboardTask, DashboardTaskStatus } from '../../model/dashboard.types';
 import { I18nService } from '../../../i18n/i18n.service';
+import { createTaskTypeChartOptions } from './task-type-chart.config';
 
 interface TaskTypeChartRow {
   day: string;
@@ -21,23 +21,34 @@ interface TaskTypeChartRow {
 })
 export class TaskTypeChartComponent implements OnChanges {
   @Input() tasks: DashboardTask[] | null = [];
-  @ViewChild(IgxCategoryChartComponent) private chart?: IgxCategoryChartComponent;
 
-  readonly categoryChartType = CategoryChartType;
-  readonly toolTipType = ToolTipType;
   readonly chartBrushes = ['#f59e0b', '#38bdf8', '#34d399'];
   readonly chartGridStroke = 'rgba(148, 163, 184, 0.16)';
-  readonly chartGridMinorStroke = 'rgba(148, 163, 184, 0.08)';
-  readonly defaultWindowRect: IgRect = {
-    left: 0,
-    top: 0,
-    width: 1,
-    height: 1
-  };
+  readonly lineChartType = 'line' as const;
+  readonly minVisiblePoints = 3;
+  readonly chartOptions: ChartOptions<'line'>;
 
   chartData: TaskTypeChartRow[] = [];
+  visibleChartData: TaskTypeChartRow[] = [];
+  lineChartData: ChartData<'line'> = {
+    labels: [],
+    datasets: []
+  };
+  visibleStartIndex = 0;
+  visiblePointCount = 0;
 
-  constructor(public i18n: I18nService) {}
+  constructor(public i18n: I18nService) {
+    this.chartOptions = createTaskTypeChartOptions({
+      chartBrushes: this.chartBrushes,
+      chartGridStroke: this.chartGridStroke,
+      getChartTitle: () => this.i18n.translate('dashboard.chart.chartTitle'),
+      getSubtitle: () => this.i18n.translate('dashboard.chart.subtitle'),
+      getXAxisTitle: () => this.i18n.translate('dashboard.chart.xAxisTitle'),
+      getYAxisTitle: () => this.i18n.translate('dashboard.chart.yAxisTitle'),
+      getTooltipTitle: (items) => this.getTooltipTitle(items),
+      getTooltipLabel: (item) => this.getTooltipLabel(item)
+    });
+  }
 
   ngOnChanges(changes: SimpleChanges): void {
     if ('tasks' in changes) {
@@ -45,24 +56,12 @@ export class TaskTypeChartComponent implements OnChanges {
     }
   }
 
-  get includedProperties(): string[] {
-    return ['pendingCount', 'inProgressCount', 'doneCount'];
-  }
-
   get canZoomIn(): boolean {
-    return (this.chart?.windowRect?.width ?? 1) > 0.25;
+    return this.visibleChartData.length > this.minVisiblePoints;
   }
 
   get canZoomOut(): boolean {
-    return (this.chart?.windowRect?.width ?? 1) < 0.999;
-  }
-
-  readonly formatXAxisLabel = (item: unknown): string => {
-    if (item && typeof item === 'object' && 'day' in item) {
-      return String((item as TaskTypeChartRow).day);
-    }
-
-    return '';
+    return this.visibleChartData.length < this.chartData.length;
   }
 
   zoomIn(): void {
@@ -73,16 +72,16 @@ export class TaskTypeChartComponent implements OnChanges {
     this.applyZoom(1 / 0.7);
   }
 
-  getStatusLabel(value: number): string {
-    if (Number(value) === 0) {
+  getStatusLabel(value: DashboardTaskStatus | number): string {
+    if (value === DashboardTaskStatus.Pending || Number(value) === 0) {
       return this.i18n.translate('dashboard.firestore.status.pending');
     }
 
-    if (Number(value) === 1) {
+    if (value === DashboardTaskStatus.InProgress || Number(value) === 1) {
       return this.i18n.translate('dashboard.firestore.status.in-progress');
     }
 
-    if (Number(value) === 2) {
+    if (value === DashboardTaskStatus.Done || Number(value) === 2) {
       return this.i18n.translate('dashboard.firestore.status.done');
     }
 
@@ -96,7 +95,8 @@ export class TaskTypeChartComponent implements OnChanges {
 
     if (validTasks.length === 0) {
       this.chartData = [];
-      this.resetZoom();
+      this.resetVisibleRange();
+      this.syncVisibleChart();
       return;
     }
 
@@ -136,6 +136,9 @@ export class TaskTypeChartComponent implements OnChanges {
     this.chartData = Array.from(rowsByDay.entries())
       .sort(([left], [right]) => left.localeCompare(right))
       .map(([, row]) => row);
+
+    this.resetVisibleRange();
+    this.syncVisibleChart();
   }
 
   private getChartStartDate(currentDate: Date): Date {
@@ -143,32 +146,78 @@ export class TaskTypeChartComponent implements OnChanges {
   }
 
   private applyZoom(factor: number): void {
-    if (!this.chart) {
+    if (this.chartData.length === 0) {
       return;
     }
 
-    const currentRect = this.chart.windowRect ?? this.defaultWindowRect;
-    const nextWidth = this.clamp(currentRect.width * factor, 0.2, 1);
-    const nextLeft = this.clamp(currentRect.left + ((currentRect.width - nextWidth) / 2), 0, 1 - nextWidth);
+    const currentCount = this.visibleChartData.length || this.chartData.length;
+    const nextCount = this.clamp(Math.round(currentCount * factor), this.minVisiblePoints, this.chartData.length);
+    const currentCenter = this.visibleStartIndex + (currentCount / 2);
+    const nextStart = this.clamp(
+      Math.round(currentCenter - (nextCount / 2)),
+      0,
+      Math.max(this.chartData.length - nextCount, 0)
+    );
 
-    this.chart.windowRect = {
-      left: nextLeft,
-      top: currentRect.top,
-      width: nextWidth,
-      height: currentRect.height
-    };
-  }
-
-  private resetZoom(): void {
-    if (!this.chart) {
-      return;
-    }
-
-    this.chart.windowRect = this.defaultWindowRect;
+    this.visibleStartIndex = nextStart;
+    this.visiblePointCount = nextCount;
+    this.syncVisibleChart();
   }
 
   private clamp(value: number, min: number, max: number): number {
     return Math.min(Math.max(value, min), max);
+  }
+
+  private resetVisibleRange(): void {
+    this.visibleStartIndex = 0;
+    this.visiblePointCount = this.chartData.length;
+  }
+
+  private syncVisibleChart(): void {
+    this.visibleChartData = this.chartData.slice(
+      this.visibleStartIndex,
+      this.visibleStartIndex + this.visiblePointCount
+    );
+
+    this.lineChartData = {
+      labels: this.visibleChartData.map((row) => row.day),
+      datasets: this.buildDatasets()
+    };
+  }
+
+  private buildDatasets(): ChartDataset<'line', number[]>[] {
+    return [
+      {
+        label: this.getStatusLabel(DashboardTaskStatus.Pending),
+        data: this.visibleChartData.map((row) => row.pendingCount),
+        borderColor: this.chartBrushes[0],
+        backgroundColor: this.chartBrushes[0]
+      },
+      {
+        label: this.getStatusLabel(DashboardTaskStatus.InProgress),
+        data: this.visibleChartData.map((row) => row.inProgressCount),
+        borderColor: this.chartBrushes[1],
+        backgroundColor: this.chartBrushes[1]
+      },
+      {
+        label: this.getStatusLabel(DashboardTaskStatus.Done),
+        data: this.visibleChartData.map((row) => row.doneCount),
+        borderColor: this.chartBrushes[2],
+        backgroundColor: this.chartBrushes[2]
+      }
+    ];
+  }
+
+  private getTooltipTitle(items: TooltipItem<'line'>[]): string {
+    if (items.length === 0) {
+      return '';
+    }
+
+    return this.visibleChartData[items[0].dataIndex]?.fullDate ?? '';
+  }
+
+  private getTooltipLabel(item: TooltipItem<'line'>): string {
+    return `${item.dataset.label}: ${item.formattedValue}`;
   }
 
   private createRow(value: Date): TaskTypeChartRow {

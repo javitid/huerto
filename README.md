@@ -1,6 +1,6 @@
 # Huerto
 
-Base de proyecto Angular 21 pensada para reutilizarse como plantilla de una web general con autenticación real, estilos con Tailwind, pruebas con Jest y Playwright, despliegue en GitHub Pages e internacionalización básica en español e inglés.
+Base de proyecto Angular 21 pensada para reutilizarse como plantilla de una web general con autenticación real, estilos con Tailwind, lint con ESLint, pruebas con Jest y Playwright, despliegue en GitHub Pages e internacionalización básica en español e inglés.
 
 La internacionalización se guarda en ficheros `json` por idioma dentro de `src/assets/i18n/`, y el selector global de idioma usa PrimeNG con el estilo visual integrado en la propia app.
 
@@ -12,9 +12,10 @@ Para Firestore, esta base asume una colección por usuario en `users/{uid}/tasks
 
 Este repositorio ya incluye:
 
-- Angular 18 con NgModules
+- Angular 21 con NgModules
 - Tailwind CSS
 - Firebase Authentication
+- ESLint con `angular-eslint`
 - acceso con Google
 - acceso anónimo
 - ruta protegida con `AuthGuard`
@@ -23,11 +24,11 @@ Este repositorio ya incluye:
 
 ## Stack
 
-- Angular `18.2.x`
-- TypeScript `~5.4.5`
+- Angular `21.2.x`
+- TypeScript `~5.9.3`
 - Tailwind CSS `3.4.x`
 - Firebase Web SDK `10.x`
-- `@angular/fire` `18.x`
+- ESLint `10.x` + `angular-eslint` `21.x`
 - Jest
 - Playwright + `playwright-bdd`
 
@@ -55,9 +56,28 @@ Este repositorio ya incluye:
 - `npm run build`: build de producción
 - `npm run build:pages`: build de producción para Pages
 - `npm run watch`: build de desarrollo en watch
+- `npm run lint`: lint de TypeScript y templates Angular
+- `npm run lint:fix`: aplica autofixes seguros de ESLint cuando existen
 - `npm test`: tests unitarios
 - `npm run test:e2e`: tests E2E con Playwright BDD
 - `npm run test:e2e:ui`: Playwright UI
+
+## Calidad y validación
+
+El flujo básico de validación local recomendado antes de subir cambios es:
+
+```bash
+npm run lint
+npm run test:unit -- --watch=false
+```
+
+Si el cambio toca rutas, copy visible, autenticación o integración con Firestore, conviene añadir también:
+
+```bash
+npm run test:e2e
+```
+
+El workflow de GitHub Pages ejecuta `lint`, tests unitarios y E2E antes de permitir la build y el despliegue.
 
 ## Cómo arrancar un proyecto nuevo con esta base
 

@@ -17,6 +17,7 @@ When regenerating this project, preserve all of the following unless the user ex
 - SCSS as the Angular component style format.
 - Tailwind CSS available and wired through the global `src/styles.scss`.
 - Jest for unit testing.
+- ESLint with `angular-eslint` for TypeScript and Angular template linting.
 - Playwright + `playwright-bdd` for end-to-end / acceptance testing.
 - A two-screen app with `login` and `dashboard` routes.
 - The `login` and `dashboard` routes lazily loaded so Firebase-backed features do not bloat the initial bundle.
@@ -29,6 +30,7 @@ When regenerating this project, preserve all of the following unless the user ex
 - A local-only Firebase environment file ignored by git.
 - GitHub Pages deployment with Firebase production config injected from GitHub Secrets.
 - CI validation with Jest unit tests and Playwright E2E before deployment.
+- CI validation with ESLint, Jest unit tests, and Playwright E2E before deployment.
 - The same npm scripts, or equivalent scripts with the same behavior.
 - The same dependency categories and purpose.
 - A visually styled login page, dashboard, and route-level error screens using Tailwind utility classes in templates.
@@ -103,6 +105,7 @@ The project should look like this at a high level:
 - `postcss.config.js`
 - `jest.config.js`
 - `playwright.config.ts`
+- `eslint.config.js`
 - `src/app/i18n/`
 - `src/assets/i18n/es.json`
 - `src/assets/i18n/en.json`
@@ -189,6 +192,7 @@ When generating or regenerating `angular.json`, preserve these behaviors:
   - `config` set to `jest.config.js`
   - `tsConfig` set to `tsconfig.spec.json`
   - `zoneless` set to `false`
+- Lint target uses `@angular-eslint/builder:lint` and covers both `src/**/*.ts` and `src/**/*.html`
 
 ## Authentication Requirements
 
@@ -247,6 +251,7 @@ The repository is expected to support deployment to GitHub Pages using a GitHub 
 When regenerating the workflow:
 
 - Keep `.github/workflows/deploy-pages.yml`.
+- Run ESLint before the build job.
 - Run Jest unit tests before the build job.
 - Run Playwright end-to-end tests before the build job.
 - Do not allow the deploy stage to run unless tests pass.

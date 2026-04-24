@@ -17,7 +17,14 @@
 - Keep this `memory.md` updated with reusable project conventions discovered during implementation work.
 - Reusable parallel-work instructions live under `.agents/`, including `coordinator`, `gherkin-playwright`, `unit-tests`, and `app-integration`.
 
+## Quality Habit
+
+- Keep `eslint.config.js` aligned with the current Angular architecture of the repo; do not enable migration-driven rules such as `prefer-standalone` or `prefer-inject` unless the codebase is intentionally moving there.
+- Use `npm run lint` as part of the normal local validation loop for app changes.
+- Use `npm run lint:fix` for safe autofixes before hand-editing style-only issues.
+
 ## Release Habit
 
+- Before creating a commit intended to be pushed to `master`, run `npm run lint`.
 - Before creating a commit intended to be pushed to `master`, run both the unit test suite and the Playwright acceptance/E2E suite in the current workspace.
-- Do not push to `master` if either suite has not been run or is failing.
+- Do not push to `master` if lint or either test suite has not been run or is failing.

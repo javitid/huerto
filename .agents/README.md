@@ -16,8 +16,10 @@ This project uses a three-agent collaboration split for medium and large tasks, 
 - If a task requires touching another agent's owned files, hand off or coordinate explicitly.
 - Treat these files as reusable operating instructions for future parallel work.
 - The coordinator is responsible for deciding whether a task should be split across agents or handled by a single owner.
+- Treat `npm run lint` as a shared quality gate for changed code, not as an optional cleanup step.
 
 ## Handoff Boundaries
 
 - E2E-facing app hooks such as `src/app/testing/e2e-mode.ts`, `src/app/auth/auth.service.ts`, and `src/app/dashboard/data/dashboard-firestore.service.ts` are coordination boundaries.
 - `data-testid` attributes, route flows, and user-facing copy used by E2E should be changed carefully and communicated across agents.
+- When a task changes production code or templates, the owning agent should expect ESLint feedback on both `*.ts` and Angular `*.html`.

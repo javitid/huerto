@@ -35,6 +35,7 @@ Own unit-level verification for the Angular application outside the E2E stack.
   - `src/app/testing/e2e-mode.ts`
   - E2E branches in auth/dashboard services
 - If a production fix is required, stop at the failing test and hand off the functional change.
+- If a spec change forces app or template updates, ask the app owner to rerun or confirm lint on the affected production files.
 
 ## Working Style
 

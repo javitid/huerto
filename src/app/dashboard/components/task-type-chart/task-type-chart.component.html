@@ -6,7 +6,7 @@
       <p class="mt-3 max-w-3xl text-sm leading-7 text-slate-300">{{ 'dashboard.chart.description' | t }}</p>
     </div>
     <div class="rounded-2xl border border-sky-300/20 bg-sky-300/10 px-4 py-3 text-xs font-semibold uppercase tracking-[0.18em] text-sky-100">
-      Ignite UI
+      Chart.js
     </div>
   </div>
 
@@ -31,55 +31,14 @@
         </button>
       </div>
 
-      <ng-template #chartTooltip let-item="item">
-        <div class="chart-tooltip">
-          <p class="chart-tooltip__eyebrow">{{ 'dashboard.chart.tooltip.dayLabel' | t }}</p>
-          <p class="chart-tooltip__date">{{ item?.fullDate ?? item?.day }}</p>
-          <p class="chart-tooltip__value">
-            <span class="chart-tooltip__dot chart-tooltip__dot--pending"></span>
-            {{ getStatusLabel(0) }}: {{ item?.pendingCount ?? 0 }}
-          </p>
-          <p class="chart-tooltip__value">
-            <span class="chart-tooltip__dot chart-tooltip__dot--progress"></span>
-            {{ getStatusLabel(1) }}: {{ item?.inProgressCount ?? 0 }}
-          </p>
-          <p class="chart-tooltip__value">
-            <span class="chart-tooltip__dot chart-tooltip__dot--done"></span>
-            {{ getStatusLabel(2) }}: {{ item?.doneCount ?? 0 }}
-          </p>
-        </div>
-      </ng-template>
-
-      <igx-category-chart
-        class="task-type-chart block"
-        width="100%"
-        height="420px"
-        [dataSource]="chartData"
-        [chartType]="categoryChartType.Line"
-        [toolTipType]="toolTipType.Item"
-        [includedProperties]="includedProperties"
-        [brushes]="chartBrushes"
-        [outlines]="chartBrushes"
-        [xAxisMajorStroke]="chartGridStroke"
-        [yAxisMajorStroke]="chartGridStroke"
-        [xAxisMinorStroke]="chartGridMinorStroke"
-        [yAxisMinorStroke]="chartGridMinorStroke"
-        yAxisMinimumValue="0"
-        yAxisMaximumValue="5"
-        yAxisInterval="1"
-        xAxisInterval="1"
-        windowRectMinWidth="0.2"
-        [isTransitionInEnabled]="true"
-        [shouldAutoExpandMarginForInitialLabels]="true"
-        [shouldConsiderAutoRotationForInitialLabels]="true"
-        [xAxisFormatLabel]="formatXAxisLabel"
-        [tooltipTemplate]="chartTooltip"
-        [xAxisTitle]="'dashboard.chart.xAxisTitle' | t"
-        [yAxisTitle]="'dashboard.chart.yAxisTitle' | t"
-        [chartTitle]="'dashboard.chart.chartTitle' | t"
-        [subtitle]="'dashboard.chart.subtitle' | t"
-      >
-      </igx-category-chart>
+      <div class="task-type-chart">
+        <canvas
+          baseChart
+          [type]="lineChartType"
+          [data]="lineChartData"
+          [options]="chartOptions"
+        ></canvas>
+      </div>
 
       <div class="mt-5 flex flex-wrap gap-3">
         <div class="chart-legend-item">
