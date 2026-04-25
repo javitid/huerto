@@ -15,7 +15,7 @@ import { DashboardFileAnalysisResult, DashboardTask, DashboardTaskStatus, Dashbo
 })
 export class DashboardComponent {
   readonly dashboardTaskStatus = DashboardTaskStatus;
-  readonly showInvoiceAnalysis = signal(false);
+  readonly showInvoiceAnalysis = signal(true);
   readonly statusOptions = [
     { value: DashboardTaskStatus.Pending, labelKey: 'dashboard.firestore.status.pending' },
     { value: DashboardTaskStatus.InProgress, labelKey: 'dashboard.firestore.status.in-progress' },

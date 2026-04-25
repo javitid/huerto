@@ -1,27 +1,13 @@
 import { Injectable } from '@angular/core';
 import { User } from 'firebase/auth';
-import { environment } from '../../../environments/environment';
-import { getE2EAuthUser } from '../../testing/e2e-mode';
 import { DashboardFileAnalysisResult } from '../model/dashboard.types';
-
-export const DASHBOARD_FILE_ANALYSIS_EMAIL = 'AUTHORIZED_GOOGLE_EMAIL';
-export const DASHBOARD_FILE_ANALYSIS_E2E_EMAIL = 'file-analysis@huerto.local';
 
 @Injectable({
   providedIn: 'root'
 })
 export class DashboardFileAnalysisService {
   canAnalyzeFiles(user: Pick<User, 'uid' | 'email'> | null): boolean {
-    const userEmail = user?.email?.trim().toLowerCase() ?? '';
-    const allowedEmails = environment.fileAnalysis.allowedEmails
-      .map((value) => value.trim().toLowerCase())
-      .filter((value) => value.length > 0 && value !== DASHBOARD_FILE_ANALYSIS_EMAIL.toLowerCase());
-
-    if (getE2EAuthUser()) {
-      allowedEmails.push(DASHBOARD_FILE_ANALYSIS_E2E_EMAIL);
-    }
-
-    return allowedEmails.includes(userEmail);
+    return user !== null;
   }
 
   async analyzeFile(user: Pick<User, 'uid' | 'email'> | null, file: File): Promise<DashboardFileAnalysisResult> {
@@ -47,7 +33,7 @@ export class DashboardFileAnalysisService {
     return {
       fileName: normalizedName,
       analyzed: true,
-      message: 'Factura analizada. Revisa los datos extraidos y las oportunidades de optimizacion.',
+      message: 'CV analizado. Revisa los datos detectados y las recomendaciones de mejora.',
       fields,
       recommendations,
       metadata: {
@@ -84,31 +70,25 @@ export class DashboardFileAnalysisService {
     const normalizedText = text.replace(/\s+/g, ' ').trim();
 
     const fields = [
-      this.createField('Resumen', 'Total factura', this.matchValue(normalizedText, /Total\s+(\d+,\d{2}\s*€)/i)),
-      this.createField('Resumen', 'Periodo de facturacion', this.matchValue(normalizedText, /Periodo de facturaci[oó]n:\s*del\s*([0-9/]+\s*a\s*[0-9/]+)/i)),
-      this.createField('Resumen', 'Fecha de emision', this.matchValue(normalizedText, /Fecha emisi[oó]n factura:\s*([0-9/]+)/i)),
-      this.createField('Factura', 'Numero de factura', this.matchValue(normalizedText, /N[ºo]\s*factura:\s*([A-Z0-9]+)/i)),
-      this.createField('Factura', 'Referencia', this.matchValue(normalizedText, /Referencia:\s*([0-9]+)/i)),
-      this.createField('Contrato', 'Titular', this.matchValue(normalizedText, /Titular del contrato:\s*(.*?)\s+NIF:/i)),
-      this.createField('Contrato', 'NIF', this.matchValue(normalizedText, /NIF:\s*([A-Z0-9]+)/i)),
-      this.createField('Contrato', 'Direccion de suministro', this.matchValue(normalizedText, /Direcci[oó]n de suministro:\s*(.*?)\s+Contrato de mercado libre:/i)),
-      this.createField('Contrato', 'Producto o tarifa', this.matchValue(normalizedText, /Contrato de mercado libre:\s*(.*?)\s+Referencia de contrato/i)),
-      this.createField('Contrato', 'CUPS', this.matchValue(normalizedText, /CUPS:\s*([A-Z0-9]+)/i)),
-      this.createField('Contrato', 'Peaje', this.matchValue(normalizedText, /Peaje de transporte y distribuci[oó]n:\s*([0-9.A-Z]+)/i)),
-      this.createField('Contrato', 'Potencia contratada punta-llano', this.matchValue(normalizedText, /Potencias contratadas:\s*punta-llano\s*([\d.,]+\s*kW)/i)),
-      this.createField('Contrato', 'Potencia contratada valle', this.matchValue(normalizedText, /Potencias contratadas:.*?valle\s*([\d.,]+\s*kW)/i)),
-      this.createField('Consumo', 'Consumo total', this.matchValue(normalizedText, /Consumo Total\s*([\d.,]+\s*kWh)/i)),
-      this.createField('Consumo', 'Precio medio del periodo', this.matchValue(normalizedText, /ha salido a\s*([\d.,]+\s*€\/kWh)/i)),
-      this.createField('Consumo', 'Pico maximo P1', this.matchValue(normalizedText, /han sido\s*([\d.,]+\s*kW)\s*en P1/i)),
-      this.createField('Consumo', 'Pico maximo P3', this.matchValue(normalizedText, /y\s*([\d.,]+\s*kW)\s*en P3/i)),
-      this.createField('Consumo', 'Consumo punta', this.matchValue(normalizedText, /Punta\s+[\d.,]+\s+[\d.,]+\s+1,00\s+0,00\s+([\d.,]+)/i, ' kWh')),
-      this.createField('Consumo', 'Consumo llano', this.matchValue(normalizedText, /Llano\s+[\d.,]+\s+[\d.,]+\s+1,00\s+0,00\s+([\d.,]+)/i, ' kWh')),
-      this.createField('Consumo', 'Consumo valle', this.matchValue(normalizedText, /Valle\s+[\d.,]+\s+[\d.,]+\s+1,00\s+0,00\s+([\d.,]+)/i, ' kWh')),
-      this.createField('Costes', 'Termino de potencia', this.matchValue(normalizedText, /Potencia\s+(\d+,\d{2}\s*€)/i)),
-      this.createField('Costes', 'Termino de energia', this.matchValue(normalizedText, /Energ[ií]a\s+(\d+,\d{2}\s*€)/i)),
-      this.createField('Costes', 'Descuentos', this.matchValue(normalizedText, /Descuentos\s+(-?[\d.,]+\s*€)/i)),
-      this.createField('Costes', 'Otros conceptos', this.matchValue(normalizedText, /Otros\s+([\d.,]+\s*€)/i) || this.matchValue(normalizedText, /Varios\s+([\d.,]+\s*€)/i)),
-      this.createField('Costes', 'Impuestos', this.matchValue(normalizedText, /Impuestos\s+([\d.,]+\s*€)/i))
+      this.createField('Resumen', 'Nombre completo', this.matchValue(normalizedText, /(?:Nombre|Candidato|Candidate):\s*(.*?)(?=\s+(?:Email|Correo|Tel[eé]fono|Telefono|Phone|Ubicaci[oó]n|Localidad|Location|Puesto objetivo|Objetivo profesional|Desired role):|$)/i)),
+      this.createField('Resumen', 'Puesto objetivo', this.matchValue(normalizedText, /(?:Puesto objetivo|Objetivo profesional|Desired role):\s*(.*?)(?=\s+(?:Resumen profesional|Perfil profesional|Professional summary|Email|Correo|Tel[eé]fono|Telefono|Phone|Experiencia|Experience|Puesto actual|Current role):|$)/i)),
+      this.createField('Resumen', 'Anios de experiencia', this.matchValue(normalizedText, /(\d+)\s*a[nñ]os?\s+de\s+experiencia/i, ' años')),
+      this.createField('Perfil', 'Email', this.matchValue(normalizedText, /([A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,})/i)),
+      this.createField('Perfil', 'Telefono', this.matchValue(normalizedText, /(?:Tel[eé]fono|Telefono|Phone):\s*(\+?[0-9 ][0-9 -]{7,})/i)),
+      this.createField('Perfil', 'Ubicacion', this.matchValue(normalizedText, /(?:Ubicaci[oó]n|Localidad|Location):\s*(.*?)(?=\s+(?:LinkedIn|GitHub|Portfolio|Portafolio|Resumen profesional|Perfil profesional|Professional summary|Experiencia|Experience|Puesto actual|Current role):|$)/i)),
+      this.createField('Perfil', 'LinkedIn', this.matchValue(normalizedText, /(https?:\/\/(?:www\.)?linkedin\.com\/[^\s]+)/i) || this.matchValue(normalizedText, /LinkedIn:\s*(.*?)(?=\s+(?:GitHub|Portfolio|Portafolio|Resumen profesional|Perfil profesional|Professional summary|Experiencia|Experience):|$)/i)),
+      this.createField('Perfil', 'GitHub o portfolio', this.matchValue(normalizedText, /(https?:\/\/(?:www\.)?(?:github\.com|gitlab\.com|[a-z0-9.-]+\.[a-z]{2,}\/portfolio)[^\s]*)/i) || this.matchValue(normalizedText, /(?:GitHub|Portfolio|Portafolio):\s*(.*?)(?=\s+(?:Resumen profesional|Perfil profesional|Professional summary|Experiencia|Experience|Formaci[oó]n|Educaci[oó]n|Education):|$)/i)),
+      this.createField('Perfil', 'Resumen profesional', this.matchValue(normalizedText, /(?:Resumen profesional|Perfil profesional|Professional summary):\s*(.*?)(?=\s+(?:Experiencia|Experience|Puesto actual|Current role|Formaci[oó]n|Educaci[oó]n|Education):|$)/i)),
+      this.createField('Experiencia', 'Puesto actual', this.matchValue(normalizedText, /(?:Puesto actual|Current role):\s*(.*?)(?=\s+(?:Empresa actual|Current company|Empresa|Company|Desde|Periodo|Logro destacado|Achievement|Formaci[oó]n|Educaci[oó]n|Education):|$)/i)),
+      this.createField('Experiencia', 'Empresa actual', this.matchValue(normalizedText, /(?:Empresa actual|Current company|Empresa|Company):\s*(.*?)(?=\s+(?:Desde|Periodo|Logro destacado|Achievement|Formaci[oó]n|Educaci[oó]n|Education):|$)/i)),
+      this.createField('Experiencia', 'Periodo reciente', this.matchValue(normalizedText, /(?:Periodo|Desde):\s*((?:20\d{2}|19\d{2}).*?(?:Actualidad|Presente|Present|20\d{2}|19\d{2}))/i)),
+      this.createField('Experiencia', 'Logro destacado', this.matchValue(normalizedText, /(?:Logro destacado|Achievement):\s*(.*?)(?=\s+(?:Formaci[oó]n|Educaci[oó]n|Education|Habilidades|Skills|Idiomas|Languages):|$)/i)),
+      this.createField('Formacion', 'Titulacion principal', this.matchValue(normalizedText, /(?:Formaci[oó]n|Educaci[oó]n|Education):\s*(.*?)(?=\s+(?:Centro|Universidad|Institution|Promoci[oó]n|A[nñ]o|Graduation year|Habilidades|Skills|Idiomas|Languages):|$)/i)),
+      this.createField('Formacion', 'Centro', this.matchValue(normalizedText, /(?:Centro|Universidad|Institution):\s*(.*?)(?=\s+(?:Promoci[oó]n|A[nñ]o|Graduation year|Habilidades|Skills|Idiomas|Languages):|$)/i)),
+      this.createField('Formacion', 'Anio', this.matchValue(normalizedText, /(?:Promoci[oó]n|A[nñ]o|Graduation year):\s*(20\d{2}|19\d{2})/i)),
+      this.createField('Habilidades', 'Habilidades clave', this.matchValue(normalizedText, /(?:Habilidades|Skills):\s*(.*?)(?=\s+(?:Idiomas|Languages|Certificaciones|Certifications):|$)/i)),
+      this.createField('Habilidades', 'Idiomas', this.matchValue(normalizedText, /(?:Idiomas|Languages):\s*(.*?)(?=\s+(?:Certificaciones|Certifications):|$)/i)),
+      this.createField('Habilidades', 'Certificaciones', this.matchValue(normalizedText, /(?:Certificaciones|Certifications):\s*(.*)$/i))
     ];
 
     return fields.filter((field): field is NonNullable<typeof field> => field !== null);
@@ -116,64 +96,63 @@ export class DashboardFileAnalysisService {
 
   private buildRecommendations(fields: DashboardFileAnalysisResult['fields']): DashboardFileAnalysisResult['recommendations'] {
     const recommendations: NonNullable<DashboardFileAnalysisResult['recommendations']> = [];
-    const contractedPower = Math.max(
-      this.parseNumericValue(this.getFieldValue(fields, 'Potencia contratada punta-llano')),
-      this.parseNumericValue(this.getFieldValue(fields, 'Potencia contratada valle'))
-    );
-    const maxDemand = Math.max(
-      this.parseNumericValue(this.getFieldValue(fields, 'Pico maximo P1')),
-      this.parseNumericValue(this.getFieldValue(fields, 'Pico maximo P3'))
-    );
-    const powerCost = this.parseNumericValue(this.getFieldValue(fields, 'Termino de potencia'));
-    const energyCost = this.parseNumericValue(this.getFieldValue(fields, 'Termino de energia'));
-    const averageEnergyPrice = this.parseNumericValue(this.getFieldValue(fields, 'Precio medio del periodo'));
-    const punta = this.parseNumericValue(this.getFieldValue(fields, 'Consumo punta'));
-    const llano = this.parseNumericValue(this.getFieldValue(fields, 'Consumo llano'));
-    const valle = this.parseNumericValue(this.getFieldValue(fields, 'Consumo valle'));
+    const yearsOfExperience = this.parseNumericValue(this.getFieldValue(fields, 'Anios de experiencia'));
+    const summary = this.getFieldValue(fields, 'Resumen profesional');
+    const linkedIn = this.getFieldValue(fields, 'LinkedIn');
+    const portfolio = this.getFieldValue(fields, 'GitHub o portfolio');
+    const skills = this.getFieldValue(fields, 'Habilidades clave');
+    const languages = this.getFieldValue(fields, 'Idiomas');
+    const achievement = this.getFieldValue(fields, 'Logro destacado');
+    const skillCount = skills
+      .split(/[;,|]/)
+      .map((value) => value.trim())
+      .filter((value) => value.length > 0).length;
 
-    if (contractedPower > 0 && maxDemand > 0 && contractedPower >= maxDemand * 5) {
-      recommendations.push({
-        severity: 'high',
-        title: 'Potencia probablemente sobredimensionada',
-        detail: `La potencia contratada (${this.formatDecimal(contractedPower)} kW) esta muy por encima del pico maximo detectado (${this.formatDecimal(maxDemand)} kW). Conviene revisar varias facturas y estudiar una bajada escalonada.`
-      });
-    }
-
-    if (powerCost > energyCost && powerCost > 0 && energyCost > 0) {
+    if (!summary) {
       recommendations.push({
         severity: 'medium',
-        title: 'El termino fijo pesa mas que el consumo',
-        detail: `Estas pagando mas por potencia (${this.formatCurrency(powerCost)}) que por energia consumida (${this.formatCurrency(energyCost)}). Esto refuerza la hipotesis de exceso de potencia contratada.`
+        title: 'Falta un resumen profesional claro',
+        detail: 'Añadir un resumen de 3 a 5 lineas al inicio ayuda a contextualizar el perfil y a que reclutadores entiendan rapido tu propuesta de valor.'
       });
     }
 
-    if (averageEnergyPrice >= 0.18) {
+    if (!linkedIn && !portfolio) {
       recommendations.push({
         severity: 'medium',
-        title: 'Precio de energia alto para revisar',
-        detail: `El precio medio del periodo (${averageEnergyPrice.toFixed(6)} €/kWh) parece elevado. Conviene compararlo con ofertas alternativas y con varias facturas del mismo suministro.`
-      });
-    } else if (averageEnergyPrice > 0) {
-      recommendations.push({
-        severity: 'info',
-        title: 'Precio de energia aparentemente razonable',
-        detail: `El precio medio del periodo (${averageEnergyPrice.toFixed(6)} €/kWh) no parece desproporcionado a primera vista, aunque conviene compararlo con otras comercializadoras y mas meses.`
+        title: 'Falta un enlace profesional visible',
+        detail: 'Conviene incluir LinkedIn, GitHub o portfolio para facilitar la validacion del perfil y ampliar contexto mas alla del PDF.'
       });
     }
 
-    if (valle > punta && valle > llano) {
+    if (skillCount > 0 && skillCount < 4) {
+      recommendations.push({
+        severity: 'medium',
+        title: 'Conviene detallar mas habilidades',
+        detail: 'El CV muestra pocas habilidades concretas. Incluir stack, herramientas o competencias clave suele mejorar la legibilidad del perfil.'
+      });
+    }
+
+    if (!achievement && yearsOfExperience >= 3) {
       recommendations.push({
         severity: 'info',
-        title: 'Buen aprovechamiento del periodo valle',
-        detail: `El mayor consumo cae en valle (${this.formatDecimal(valle)} kWh), lo que indica que la discriminacion horaria podria estar siendo util para este suministro.`
+        title: 'Seria bueno destacar logros medibles',
+        detail: 'Si ya tienes experiencia relevante, añadir resultados concretos o impacto cuantificable puede hacer el CV mas convincente.'
+      });
+    }
+
+    if (!languages) {
+      recommendations.push({
+        severity: 'info',
+        title: 'No se han detectado idiomas',
+        detail: 'Si manejas idiomas, conviene indicarlos con nivel para mejorar la evaluacion del perfil en procesos internacionales o mixtos.'
       });
     }
 
     if (recommendations.length === 0) {
       recommendations.push({
         severity: 'info',
-        title: 'Sin alertas claras en esta factura',
-        detail: 'No se ha detectado una oportunidad obvia con reglas simples. Para optimizar mejor conviene comparar varias facturas consecutivas.'
+        title: 'Perfil bien estructurado a primera vista',
+        detail: 'No se ha detectado una carencia evidente con reglas simples. Aun asi, conviene adaptar el CV a cada vacante para mejorar relevancia.'
       });
     }
 
@@ -206,13 +185,5 @@ export class DashboardFileAnalysisService {
 
     const parsedValue = Number.parseFloat(normalizedValue);
     return Number.isFinite(parsedValue) ? parsedValue : 0;
-  }
-
-  private formatDecimal(value: number): string {
-    return value.toFixed(3).replace('.', ',');
-  }
-
-  private formatCurrency(value: number): string {
-    return `${value.toFixed(2).replace('.', ',')} €`;
   }
 }

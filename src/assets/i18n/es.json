@@ -134,33 +134,33 @@
     },
     "analysisTemporarilyHidden": {
       "eyebrow": "Temporalmente oculto",
-      "title": "El análisis de facturas está desactivado por ahora",
+      "title": "El análisis de CV está desactivado por ahora",
       "description": "He ocultado esta parte de la interfaz temporalmente para que no aparezca en el panel mientras trabajamos en otros cambios."
     },
     "analysis": {
       "eyebrow": "Análisis privado",
-      "title": "Analizar factura de luz en PDF",
-      "description": "Esta zona solo aparece para la cuenta autorizada y extrae datos relevantes de una factura de luz en PDF para detectar posibles oportunidades de ahorro.",
-      "allowedUser": "Usuario autorizado",
-      "fileLabel": "Selecciona una factura en PDF",
+      "title": "Analizar CV en PDF",
+      "description": "Esta zona solo aparece para la cuenta autorizada y extrae datos relevantes de un CV en PDF para resumir el perfil y sugerir mejoras de presentación.",
+      "allowedUser": "Disponible para cualquier usuario",
+      "fileLabel": "Selecciona un CV en PDF",
       "selectedFile": "Fichero seleccionado",
-      "submit": "Analizar factura",
+      "submit": "Analizar CV",
       "uploading": "Analizando...",
       "success": "El fichero se ha analizado correctamente en local.",
       "resultLabel": "Resultado del análisis",
       "sections": {
         "summary": "Resumen clave",
-        "recommendations": "Posibles optimizaciones",
-        "invoice": "Datos de factura",
-        "contract": "Contrato y suministro",
-        "consumption": "Consumo y potencia",
-        "costs": "Desglose economico"
+        "recommendations": "Sugerencias de mejora",
+        "profile": "Perfil",
+        "experience": "Experiencia",
+        "education": "Formación",
+        "skills": "Habilidades"
       },
       "errors": {
         "required": "Selecciona un fichero antes de analizarlo.",
         "save": "No se pudo analizar el fichero.",
-        "pdfOnly": "Solo se admiten facturas en formato PDF.",
-        "unauthorized": "Tu cuenta no tiene permiso para analizar ficheros."
+        "pdfOnly": "Solo se admiten CV en formato PDF.",
+        "unauthorized": "Necesitas una sesión activa para analizar ficheros."
       }
     },
     "nextStepEyebrow": "Siguiente paso",

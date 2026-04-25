@@ -46,20 +46,20 @@ Then('I see the file analysis panel', async ({ page }) => {
   await expect(page.getByTestId('dashboard-upload-submit')).toBeVisible();
 });
 
-When('I select a PDF bill for analysis', async ({ page }) => {
+When('I select a PDF CV for analysis', async ({ page }) => {
   await page.setInputFiles('[data-testid="dashboard-upload-input"]', {
-    name: 'factura-luz.pdf',
+    name: 'cv-ana-perez.pdf',
     mimeType: 'application/pdf',
-    buffer: Buffer.from('%PDF-1.4 test bill')
+    buffer: Buffer.from('%PDF-1.4 test cv')
   });
 });
 
-Then('I see the selected file in the file analysis panel', async ({ page }) => {
-  await expect(page.getByText('Fichero seleccionado: factura-luz.pdf')).toBeVisible();
+Then('I see the selected file in the CV analysis panel', async ({ page }) => {
+  await expect(page.getByText('Fichero seleccionado: cv-ana-perez.pdf')).toBeVisible();
 });
 
 Then('I do not see the file analysis panel', async ({ page }) => {
   await expect(dashboardUploadPanel(page)).toHaveCount(0);
   await expect(page.getByTestId('dashboard-upload-submit')).toHaveCount(0);
-  await expect(page.getByText('El análisis de facturas está desactivado por ahora')).toBeVisible();
+  await expect(page.getByText('El análisis de CV está desactivado por ahora')).toBeVisible();
 });

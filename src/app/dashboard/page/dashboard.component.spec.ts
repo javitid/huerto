@@ -39,7 +39,7 @@ describe('DashboardComponent', () => {
 
   function createDashboardFileAnalysisMock() {
     return {
-      canAnalyzeFiles: jest.fn().mockReturnValue(false),
+      canAnalyzeFiles: jest.fn().mockReturnValue(true),
       analyzeFile: jest.fn(),
     };
   }
@@ -328,20 +328,20 @@ describe('DashboardComponent', () => {
     expect(idleDoneClasses).toContain('bg-white/5');
   });
 
-  it('only enables file uploads for the configured uploader', () => {
+  it('enables file uploads for any authenticated dashboard user', () => {
     const authService = {
       user$: new BehaviorSubject({ uid: '123' }),
       logout: jest.fn(),
     };
     const dashboardFirestore = createDashboardFirestoreMock();
     const dashboardFileAnalysis = createDashboardFileAnalysisMock();
-    dashboardFileAnalysis.canAnalyzeFiles.mockImplementation((user: { email?: string | null } | null) => user?.email === 'file-analysis@huerto.local');
+    dashboardFileAnalysis.canAnalyzeFiles.mockImplementation((user: { uid?: string | null } | null) => !!user?.uid);
     const i18n = {};
 
     const component = new DashboardComponent(authService as never, dashboardFirestore as never, dashboardFileAnalysis as never, i18n as never);
 
     expect(component.canUploadFiles({ uid: 'XuOjXcOBssPwJxdcPzzmf0VoP0r1', email: 'file-analysis@huerto.local' } as never)).toBe(true);
-    expect(component.canUploadFiles({ uid: 'other-user', email: 'other@huerto.local' } as never)).toBe(false);
+    expect(component.canUploadFiles({ uid: 'other-user', email: 'other@huerto.local' } as never)).toBe(true);
   });
 
   it('uploads the selected file for the allowed user and clears the selection', async () => {
@@ -356,7 +356,7 @@ describe('DashboardComponent', () => {
       fileName: 'orchard-plan.pdf',
       analyzed: true,
       message: 'Resumen listo',
-      fields: [{ section: 'Resumen', label: 'Total factura', value: '82,82 €' }]
+      fields: [{ section: 'Resumen', label: 'Nombre completo', value: 'Ana Perez' }]
     });
     const i18n = {
       translate: jest.fn((key: string) => `translated:${key}`)
@@ -377,7 +377,7 @@ describe('DashboardComponent', () => {
     expect(input.value).toBe('');
     expect(component.uploadSuccess()).toBe('translated:dashboard.analysis.success');
     expect(component.uploadResultSummary()).toBe('Resumen listo');
-    expect(component.getAnalysisFields('Resumen')).toEqual([{ label: 'Total factura', value: '82,82 €', section: 'Resumen' }]);
+    expect(component.getAnalysisFields('Resumen')).toEqual([{ label: 'Nombre completo', value: 'Ana Perez', section: 'Resumen' }]);
   });
 
   it('shows an upload error for users outside the allowlist', async () => {

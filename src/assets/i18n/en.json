@@ -134,33 +134,33 @@
     },
     "analysisTemporarilyHidden": {
       "eyebrow": "Temporarily hidden",
-      "title": "Invoice analysis is disabled for now",
+      "title": "CV analysis is disabled for now",
       "description": "I have hidden this part of the interface temporarily so it does not appear in the dashboard while we work on other changes."
     },
     "analysis": {
       "eyebrow": "Private analysis",
-      "title": "Analyze electricity bill PDF",
-      "description": "This area is only shown for the authorized account and extracts the key data from an electricity bill PDF to highlight possible savings opportunities.",
-      "allowedUser": "Authorized user",
-      "fileLabel": "Select a PDF bill",
+      "title": "Analyze CV PDF",
+      "description": "This area is only shown for the authorized account and extracts key data from a CV PDF to summarize the profile and suggest presentation improvements.",
+      "allowedUser": "Available for every user",
+      "fileLabel": "Select a PDF CV",
       "selectedFile": "Selected file",
-      "submit": "Analyze bill",
+      "submit": "Analyze CV",
       "uploading": "Analyzing...",
       "success": "The file was analyzed successfully in the browser.",
       "resultLabel": "Analysis result",
       "sections": {
         "summary": "Key summary",
-        "recommendations": "Possible optimizations",
-        "invoice": "Invoice data",
-        "contract": "Contract and supply",
-        "consumption": "Consumption and power",
-        "costs": "Cost breakdown"
+        "recommendations": "Improvement suggestions",
+        "profile": "Profile",
+        "experience": "Experience",
+        "education": "Education",
+        "skills": "Skills"
       },
       "errors": {
         "required": "Select a file before analyzing it.",
         "save": "The file could not be analyzed.",
-        "pdfOnly": "Only PDF bills are supported.",
-        "unauthorized": "Your account is not allowed to analyze files."
+        "pdfOnly": "Only PDF CVs are supported.",
+        "unauthorized": "You need an active session to analyze files."
       }
     },
     "nextStepEyebrow": "Next step",
