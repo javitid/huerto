@@ -141,7 +141,7 @@
       "eyebrow": "Private analysis",
       "title": "Analyze CV PDF",
       "description": "This area is only shown for the authorized account and extracts key data from a CV PDF to summarize the profile and suggest presentation improvements.",
-      "allowedUser": "Available for every user",
+      "allowedUser": "Authorized accounts only",
       "fileLabel": "Select a PDF CV",
       "selectedFile": "Selected file",
       "submit": "Analyze CV",
@@ -160,7 +160,7 @@
         "required": "Select a file before analyzing it.",
         "save": "The file could not be analyzed.",
         "pdfOnly": "Only PDF CVs are supported.",
-        "unauthorized": "You need an active session to analyze files."
+        "unauthorized": "Your account is not authorized to analyze files."
       }
     },
     "nextStepEyebrow": "Next step",

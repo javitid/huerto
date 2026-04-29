@@ -6,6 +6,6 @@ Feature: File analysis access
     When I select a PDF CV for analysis
     Then I see the selected file in the CV analysis panel
 
-  Scenario: Other users can also see the CV analysis panel
+  Scenario: Other users cannot see the CV analysis panel
     Given I am on the dashboard as another user
-    Then I see the file analysis panel
+    Then I do not see the file analysis panel

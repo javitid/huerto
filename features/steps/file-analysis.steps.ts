@@ -61,5 +61,4 @@ Then('I see the selected file in the CV analysis panel', async ({ page }) => {
 Then('I do not see the file analysis panel', async ({ page }) => {
   await expect(dashboardUploadPanel(page)).toHaveCount(0);
   await expect(page.getByTestId('dashboard-upload-submit')).toHaveCount(0);
-  await expect(page.getByText('El análisis de CV está desactivado por ahora')).toBeVisible();
 });

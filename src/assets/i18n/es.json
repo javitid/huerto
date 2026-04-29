@@ -141,7 +141,7 @@
       "eyebrow": "Análisis privado",
       "title": "Analizar CV en PDF",
       "description": "Esta zona solo aparece para la cuenta autorizada y extrae datos relevantes de un CV en PDF para resumir el perfil y sugerir mejoras de presentación.",
-      "allowedUser": "Disponible para cualquier usuario",
+      "allowedUser": "Solo para cuentas autorizadas",
       "fileLabel": "Selecciona un CV en PDF",
       "selectedFile": "Fichero seleccionado",
       "submit": "Analizar CV",
@@ -160,7 +160,7 @@
         "required": "Selecciona un fichero antes de analizarlo.",
         "save": "No se pudo analizar el fichero.",
         "pdfOnly": "Solo se admiten CV en formato PDF.",
-        "unauthorized": "Necesitas una sesión activa para analizar ficheros."
+        "unauthorized": "Tu cuenta no está autorizada para analizar ficheros."
       }
     },
     "nextStepEyebrow": "Siguiente paso",
