@@ -1,13 +1,33 @@
 import { Injectable } from '@angular/core';
 import { User } from 'firebase/auth';
-import { DashboardFileAnalysisResult } from '../model/dashboard.types';
+import { environment } from '../../../environments/environment';
+import {
+  DASHBOARD_FILE_ANALYSIS_SECTIONS,
+  DashboardFileAnalysisField,
+  DashboardFileAnalysisResult,
+  DashboardFileAnalysisSection
+} from '../model/dashboard.types';
 
 @Injectable({
   providedIn: 'root'
 })
 export class DashboardFileAnalysisService {
+  private readonly allowedEmails = new Set(
+    (environment.fileAnalysis?.allowedEmails ?? [])
+      .map((email) => email.trim().toLowerCase())
+      .filter((email) => email.length > 0 && email !== 'authorized_google_email')
+  );
+
   canAnalyzeFiles(user: Pick<User, 'uid' | 'email'> | null): boolean {
-    return user !== null;
+    if (!user?.email) {
+      return false;
+    }
+
+    if (this.allowedEmails.size === 0) {
+      return false;
+    }
+
+    return this.allowedEmails.has(user.email.trim().toLowerCase());
   }
 
   async analyzeFile(user: Pick<User, 'uid' | 'email'> | null, file: File): Promise<DashboardFileAnalysisResult> {
@@ -27,7 +47,7 @@ export class DashboardFileAnalysisService {
     }
 
     const preview = await this.extractPdfText(file);
-    const fields = this.extractInvoiceFields(preview);
+    const fields = this.extractCvFields(preview);
     const recommendations = this.buildRecommendations(fields);
 
     return {
@@ -66,29 +86,29 @@ export class DashboardFileAnalysisService {
     return pages.join(' ');
   }
 
-  private extractInvoiceFields(text: string): DashboardFileAnalysisResult['fields'] {
+  private extractCvFields(text: string): DashboardFileAnalysisResult['fields'] {
     const normalizedText = text.replace(/\s+/g, ' ').trim();
 
     const fields = [
-      this.createField('Resumen', 'Nombre completo', this.matchValue(normalizedText, /(?:Nombre|Candidato|Candidate):\s*(.*?)(?=\s+(?:Email|Correo|Tel[eé]fono|Telefono|Phone|Ubicaci[oó]n|Localidad|Location|Puesto objetivo|Objetivo profesional|Desired role):|$)/i)),
-      this.createField('Resumen', 'Puesto objetivo', this.matchValue(normalizedText, /(?:Puesto objetivo|Objetivo profesional|Desired role):\s*(.*?)(?=\s+(?:Resumen profesional|Perfil profesional|Professional summary|Email|Correo|Tel[eé]fono|Telefono|Phone|Experiencia|Experience|Puesto actual|Current role):|$)/i)),
-      this.createField('Resumen', 'Anios de experiencia', this.matchValue(normalizedText, /(\d+)\s*a[nñ]os?\s+de\s+experiencia/i, ' años')),
-      this.createField('Perfil', 'Email', this.matchValue(normalizedText, /([A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,})/i)),
-      this.createField('Perfil', 'Telefono', this.matchValue(normalizedText, /(?:Tel[eé]fono|Telefono|Phone):\s*(\+?[0-9 ][0-9 -]{7,})/i)),
-      this.createField('Perfil', 'Ubicacion', this.matchValue(normalizedText, /(?:Ubicaci[oó]n|Localidad|Location):\s*(.*?)(?=\s+(?:LinkedIn|GitHub|Portfolio|Portafolio|Resumen profesional|Perfil profesional|Professional summary|Experiencia|Experience|Puesto actual|Current role):|$)/i)),
-      this.createField('Perfil', 'LinkedIn', this.matchValue(normalizedText, /(https?:\/\/(?:www\.)?linkedin\.com\/[^\s]+)/i) || this.matchValue(normalizedText, /LinkedIn:\s*(.*?)(?=\s+(?:GitHub|Portfolio|Portafolio|Resumen profesional|Perfil profesional|Professional summary|Experiencia|Experience):|$)/i)),
-      this.createField('Perfil', 'GitHub o portfolio', this.matchValue(normalizedText, /(https?:\/\/(?:www\.)?(?:github\.com|gitlab\.com|[a-z0-9.-]+\.[a-z]{2,}\/portfolio)[^\s]*)/i) || this.matchValue(normalizedText, /(?:GitHub|Portfolio|Portafolio):\s*(.*?)(?=\s+(?:Resumen profesional|Perfil profesional|Professional summary|Experiencia|Experience|Formaci[oó]n|Educaci[oó]n|Education):|$)/i)),
-      this.createField('Perfil', 'Resumen profesional', this.matchValue(normalizedText, /(?:Resumen profesional|Perfil profesional|Professional summary):\s*(.*?)(?=\s+(?:Experiencia|Experience|Puesto actual|Current role|Formaci[oó]n|Educaci[oó]n|Education):|$)/i)),
-      this.createField('Experiencia', 'Puesto actual', this.matchValue(normalizedText, /(?:Puesto actual|Current role):\s*(.*?)(?=\s+(?:Empresa actual|Current company|Empresa|Company|Desde|Periodo|Logro destacado|Achievement|Formaci[oó]n|Educaci[oó]n|Education):|$)/i)),
-      this.createField('Experiencia', 'Empresa actual', this.matchValue(normalizedText, /(?:Empresa actual|Current company|Empresa|Company):\s*(.*?)(?=\s+(?:Desde|Periodo|Logro destacado|Achievement|Formaci[oó]n|Educaci[oó]n|Education):|$)/i)),
-      this.createField('Experiencia', 'Periodo reciente', this.matchValue(normalizedText, /(?:Periodo|Desde):\s*((?:20\d{2}|19\d{2}).*?(?:Actualidad|Presente|Present|20\d{2}|19\d{2}))/i)),
-      this.createField('Experiencia', 'Logro destacado', this.matchValue(normalizedText, /(?:Logro destacado|Achievement):\s*(.*?)(?=\s+(?:Formaci[oó]n|Educaci[oó]n|Education|Habilidades|Skills|Idiomas|Languages):|$)/i)),
-      this.createField('Formacion', 'Titulacion principal', this.matchValue(normalizedText, /(?:Formaci[oó]n|Educaci[oó]n|Education):\s*(.*?)(?=\s+(?:Centro|Universidad|Institution|Promoci[oó]n|A[nñ]o|Graduation year|Habilidades|Skills|Idiomas|Languages):|$)/i)),
-      this.createField('Formacion', 'Centro', this.matchValue(normalizedText, /(?:Centro|Universidad|Institution):\s*(.*?)(?=\s+(?:Promoci[oó]n|A[nñ]o|Graduation year|Habilidades|Skills|Idiomas|Languages):|$)/i)),
-      this.createField('Formacion', 'Anio', this.matchValue(normalizedText, /(?:Promoci[oó]n|A[nñ]o|Graduation year):\s*(20\d{2}|19\d{2})/i)),
-      this.createField('Habilidades', 'Habilidades clave', this.matchValue(normalizedText, /(?:Habilidades|Skills):\s*(.*?)(?=\s+(?:Idiomas|Languages|Certificaciones|Certifications):|$)/i)),
-      this.createField('Habilidades', 'Idiomas', this.matchValue(normalizedText, /(?:Idiomas|Languages):\s*(.*?)(?=\s+(?:Certificaciones|Certifications):|$)/i)),
-      this.createField('Habilidades', 'Certificaciones', this.matchValue(normalizedText, /(?:Certificaciones|Certifications):\s*(.*)$/i))
+      this.createField(DASHBOARD_FILE_ANALYSIS_SECTIONS.Summary, 'Nombre completo', this.matchValue(normalizedText, /(?:Nombre|Candidato|Candidate):\s*(.*?)(?=\s+(?:Email|Correo|Tel[eé]fono|Telefono|Phone|Ubicaci[oó]n|Localidad|Location|Puesto objetivo|Objetivo profesional|Desired role):|$)/i)),
+      this.createField(DASHBOARD_FILE_ANALYSIS_SECTIONS.Summary, 'Puesto objetivo', this.matchValue(normalizedText, /(?:Puesto objetivo|Objetivo profesional|Desired role):\s*(.*?)(?=\s+(?:Resumen profesional|Perfil profesional|Professional summary|Email|Correo|Tel[eé]fono|Telefono|Phone|Experiencia|Experience|Puesto actual|Current role):|$)/i)),
+      this.createField(DASHBOARD_FILE_ANALYSIS_SECTIONS.Summary, 'Anios de experiencia', this.matchValue(normalizedText, /(\d+)\s*a[nñ]os?\s+de\s+experiencia/i, ' años')),
+      this.createField(DASHBOARD_FILE_ANALYSIS_SECTIONS.Profile, 'Email', this.matchValue(normalizedText, /([A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,})/i)),
+      this.createField(DASHBOARD_FILE_ANALYSIS_SECTIONS.Profile, 'Telefono', this.matchValue(normalizedText, /(?:Tel[eé]fono|Telefono|Phone):\s*(\+?[0-9 ][0-9 -]{7,})/i)),
+      this.createField(DASHBOARD_FILE_ANALYSIS_SECTIONS.Profile, 'Ubicacion', this.matchValue(normalizedText, /(?:Ubicaci[oó]n|Localidad|Location):\s*(.*?)(?=\s+(?:LinkedIn|GitHub|Portfolio|Portafolio|Resumen profesional|Perfil profesional|Professional summary|Experiencia|Experience|Puesto actual|Current role):|$)/i)),
+      this.createField(DASHBOARD_FILE_ANALYSIS_SECTIONS.Profile, 'LinkedIn', this.matchValue(normalizedText, /(https?:\/\/(?:www\.)?linkedin\.com\/[^\s]+)/i) || this.matchValue(normalizedText, /LinkedIn:\s*(.*?)(?=\s+(?:GitHub|Portfolio|Portafolio|Resumen profesional|Perfil profesional|Professional summary|Experiencia|Experience):|$)/i)),
+      this.createField(DASHBOARD_FILE_ANALYSIS_SECTIONS.Profile, 'GitHub o portfolio', this.matchValue(normalizedText, /(https?:\/\/(?:www\.)?(?:github\.com|gitlab\.com|[a-z0-9.-]+\.[a-z]{2,}\/portfolio)[^\s]*)/i) || this.matchValue(normalizedText, /(?:GitHub|Portfolio|Portafolio):\s*(.*?)(?=\s+(?:Resumen profesional|Perfil profesional|Professional summary|Experiencia|Experience|Formaci[oó]n|Educaci[oó]n|Education):|$)/i)),
+      this.createField(DASHBOARD_FILE_ANALYSIS_SECTIONS.Profile, 'Resumen profesional', this.matchValue(normalizedText, /(?:Resumen profesional|Perfil profesional|Professional summary):\s*(.*?)(?=\s+(?:Experiencia|Experience|Puesto actual|Current role|Formaci[oó]n|Educaci[oó]n|Education):|$)/i)),
+      this.createField(DASHBOARD_FILE_ANALYSIS_SECTIONS.Experience, 'Puesto actual', this.matchValue(normalizedText, /(?:Puesto actual|Current role):\s*(.*?)(?=\s+(?:Empresa actual|Current company|Empresa|Company|Desde|Periodo|Logro destacado|Achievement|Formaci[oó]n|Educaci[oó]n|Education):|$)/i)),
+      this.createField(DASHBOARD_FILE_ANALYSIS_SECTIONS.Experience, 'Empresa actual', this.matchValue(normalizedText, /(?:Empresa actual|Current company|Empresa|Company):\s*(.*?)(?=\s+(?:Desde|Periodo|Logro destacado|Achievement|Formaci[oó]n|Educaci[oó]n|Education):|$)/i)),
+      this.createField(DASHBOARD_FILE_ANALYSIS_SECTIONS.Experience, 'Periodo reciente', this.matchValue(normalizedText, /(?:Periodo|Desde):\s*((?:20\d{2}|19\d{2}).*?(?:Actualidad|Presente|Present|20\d{2}|19\d{2}))/i)),
+      this.createField(DASHBOARD_FILE_ANALYSIS_SECTIONS.Experience, 'Logro destacado', this.matchValue(normalizedText, /(?:Logro destacado|Achievement):\s*(.*?)(?=\s+(?:Formaci[oó]n|Educaci[oó]n|Education|Habilidades|Skills|Idiomas|Languages):|$)/i)),
+      this.createField(DASHBOARD_FILE_ANALYSIS_SECTIONS.Education, 'Titulacion principal', this.matchValue(normalizedText, /(?:Formaci[oó]n|Educaci[oó]n|Education):\s*(.*?)(?=\s+(?:Centro|Universidad|Institution|Promoci[oó]n|A[nñ]o|Graduation year|Habilidades|Skills|Idiomas|Languages):|$)/i)),
+      this.createField(DASHBOARD_FILE_ANALYSIS_SECTIONS.Education, 'Centro', this.matchValue(normalizedText, /(?:Centro|Universidad|Institution):\s*(.*?)(?=\s+(?:Promoci[oó]n|A[nñ]o|Graduation year|Habilidades|Skills|Idiomas|Languages):|$)/i)),
+      this.createField(DASHBOARD_FILE_ANALYSIS_SECTIONS.Education, 'Anio', this.matchValue(normalizedText, /(?:Promoci[oó]n|A[nñ]o|Graduation year):\s*(20\d{2}|19\d{2})/i)),
+      this.createField(DASHBOARD_FILE_ANALYSIS_SECTIONS.Skills, 'Habilidades clave', this.matchValue(normalizedText, /(?:Habilidades|Skills):\s*(.*?)(?=\s+(?:Idiomas|Languages|Certificaciones|Certifications):|$)/i)),
+      this.createField(DASHBOARD_FILE_ANALYSIS_SECTIONS.Skills, 'Idiomas', this.matchValue(normalizedText, /(?:Idiomas|Languages):\s*(.*?)(?=\s+(?:Certificaciones|Certifications):|$)/i)),
+      this.createField(DASHBOARD_FILE_ANALYSIS_SECTIONS.Skills, 'Certificaciones', this.matchValue(normalizedText, /(?:Certificaciones|Certifications):\s*(.*)$/i))
     ];
 
     return fields.filter((field): field is NonNullable<typeof field> => field !== null);
@@ -159,7 +179,7 @@ export class DashboardFileAnalysisService {
     return recommendations;
   }
 
-  private createField(section: string, label: string, value: string | null): { section: string; label: string; value: string } | null {
+  private createField(section: DashboardFileAnalysisSection, label: string, value: string | null): DashboardFileAnalysisField | null {
     if (!value) {
       return null;
     }

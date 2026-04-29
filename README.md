@@ -79,6 +79,75 @@ npm run test:e2e
 
 El workflow de GitHub Pages ejecuta `lint`, tests unitarios y E2E antes de permitir la build y el despliegue.
 
+## Puntos de auditoria
+
+Estos puntos deben revisarse al modificar este proyecto y tambien al usar esta base para crear otros proyectos.
+
+### 1. Estructura escalable
+
+- Organizar la app por features y no por tipo tecnico global.
+- Mantener separacion clara entre componentes, servicios, modelos, guards y utilidades.
+- Evitar componentes pagina con demasiadas responsabilidades.
+- Favorecer lazy loading en areas funcionales grandes o rutas protegidas.
+
+### 2. Signals vs RxJS
+
+- Usar `Signals` para estado local y derivado de UI.
+- Usar `RxJS` para streams asincronos, auth, router, HTTP, Firestore y fuentes externas.
+- Evitar mezclar ambos enfoques sin una frontera clara.
+- Si una feature combina ambos, centralizar la adaptacion en una facade, servicio o view-model.
+
+### 3. Rendimiento
+
+- Priorizar `ChangeDetectionStrategy.OnPush` en componentes de feature.
+- Evitar calculos costosos y llamadas repetidas a metodos dentro del template.
+- Usar `track` o identificadores estables en listas renderizadas.
+- Mantener lazy loading, division por modulos o carga diferida cuando el area lo justifique.
+
+### 4. Memory leaks
+
+- Evitar suscripciones manuales cuando pueda usarse `async` pipe, `Signals` o `takeUntilDestroyed`.
+- No anidar `subscribe` si puede resolverse con operadores de RxJS.
+- Limpiar cualquier listener externo o integracion imperativa al destruir el componente o servicio.
+
+### 5. Flujo de datos
+
+- Dejar claro donde vive cada dato, quien lo modifica y quien solo lo consume.
+- Centralizar acceso a datos externos en servicios o facades.
+- Evitar que un componente mezcle carga de datos, reglas de negocio, mutaciones y presentacion si empieza a crecer.
+- Mantener consistencia entre nombres de dominio, tipos, template y servicio.
+
+### 6. Testing
+
+- Cubrir logica de negocio con unit tests.
+- Cubrir contratos entre servicio y template cuando haya transformaciones o render derivado.
+- Añadir E2E en flujos criticos como login, rutas protegidas, formularios y operaciones persistentes.
+- No dar por buena una feature solo porque compila; validar comportamiento observable.
+
+### 7. Depuracion y operabilidad
+
+- Gestionar errores esperables con mensajes claros y rutas de escape razonables.
+- Validar supuestos de producto contra el codigo real y la documentacion.
+- Evitar depender de `console.log` como estrategia principal de diagnostico.
+- Mantener README, configuracion y comportamiento alineados para reducir errores de integracion.
+
+### 8. Documentacion viva
+
+- Actualizar `README.md` cuando cambie una regla arquitectonica, de permisos o de despliegue.
+- Actualizar `memory.md` cuando aparezca una convencion reusable del proyecto.
+- Si una funcionalidad es privada, temporal o experimental, dejarlo reflejado en codigo, tests y documentacion.
+
+### 9. Checklist rapido antes de cerrar un cambio
+
+- La feature respeta la estructura por features.
+- El flujo de datos esta claro y no depende de acoplamientos ocultos.
+- No se introducen suscripciones o listeners sin limpieza.
+- El template no contiene logica de negocio innecesaria.
+- La documentacion sigue describiendo el comportamiento real.
+- `npm run lint` pasa.
+- `npm run test:unit -- --watch=false` pasa.
+- Si el cambio toca flujos criticos, tambien pasa `npm run test:e2e`.
+
 ## Cómo arrancar un proyecto nuevo con esta base
 
 1. Clona o copia este repositorio.
@@ -241,7 +310,7 @@ No subas:
 
 ## Análisis de ficheros en frontend
 
-El dashboard incluye una zona privada de análisis de ficheros visible solo para el usuario `XuOjXcOBssPwJxdcPzzmf0VoP0r1`.
+El dashboard incluye una zona privada de análisis de ficheros visible solo para usuarios autenticados cuyo email figure en `environment.fileAnalysis.allowedEmails`.
 
 Ese análisis se hace directamente en el navegador:
 
@@ -250,11 +319,7 @@ Ese análisis se hace directamente en el navegador:
 - no persiste el fichero por defecto
 - y es adecuado para CSV, JSON, TXT y revisiones ligeras del contenido
 
-El flujo actual devuelve un resumen simple del fichero seleccionado, por ejemplo:
-
-- filas y columnas para CSV
-- claves principales para JSON
-- líneas y palabras aproximadas para texto plano
+El flujo actual analiza CVs en PDF y devuelve campos detectados junto con recomendaciones de mejora.
 
 No hace falta configurar ningún endpoint adicional para usar esta funcionalidad.
 - secretos de backend

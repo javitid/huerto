@@ -30,20 +30,35 @@ export interface DashboardViewModel {
   tasks: DashboardTask[];
 }
 
+export const DASHBOARD_FILE_ANALYSIS_SECTIONS = {
+  Summary: 'Resumen',
+  Profile: 'Perfil',
+  Experience: 'Experiencia',
+  Education: 'Formacion',
+  Skills: 'Habilidades'
+} as const;
+
+export type DashboardFileAnalysisSection =
+  typeof DASHBOARD_FILE_ANALYSIS_SECTIONS[keyof typeof DASHBOARD_FILE_ANALYSIS_SECTIONS];
+
+export interface DashboardFileAnalysisField {
+  section: DashboardFileAnalysisSection;
+  label: string;
+  value: string;
+}
+
+export interface DashboardFileAnalysisRecommendation {
+  title: string;
+  detail: string;
+  severity: 'high' | 'medium' | 'info';
+}
+
 export interface DashboardFileAnalysisResult {
   fileName: string;
   analyzed: boolean;
   message?: string;
-  fields?: Array<{
-    section?: string;
-    label: string;
-    value: string;
-  }>;
-  recommendations?: Array<{
-    title: string;
-    detail: string;
-    severity: 'high' | 'medium' | 'info';
-  }>;
+  fields?: DashboardFileAnalysisField[];
+  recommendations?: DashboardFileAnalysisRecommendation[];
   metadata?: {
     userId: string;
     contentType: string;

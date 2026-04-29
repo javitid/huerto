@@ -1,23 +1,29 @@
 import { DashboardFileAnalysisService } from './dashboard-file-analysis.service';
 
 describe('DashboardFileAnalysisService', () => {
-  it('enables analysis for any authenticated user', () => {
+  function createAuthorizedService() {
+    const service = new DashboardFileAnalysisService() as any;
+    service.allowedEmails = new Set(['file-analysis@huerto.local']);
+    return service;
+  }
+
+  it('enables analysis only for users inside the configured allowlist', () => {
     const service = new DashboardFileAnalysisService();
 
-    expect(service.canAnalyzeFiles({ uid: 'another-user', email: 'file-analysis@huerto.local' } as never)).toBe(true);
-    expect(service.canAnalyzeFiles({ uid: 'another-user', email: 'otro@huerto.local' } as never)).toBe(true);
+    expect(service.canAnalyzeFiles({ uid: 'another-user', email: 'AUTHORIZED_GOOGLE_EMAIL' } as never)).toBe(false);
+    expect(service.canAnalyzeFiles({ uid: 'another-user', email: 'otro@huerto.local' } as never)).toBe(false);
     expect(service.canAnalyzeFiles(null)).toBe(false);
   });
 
   it('rejects files that are not pdf cv files', async () => {
-    const service = new DashboardFileAnalysisService();
+    const service = createAuthorizedService();
     const file = new File(['id,value\n1,42'], 'analysis.csv', { type: 'text/csv' });
 
     await expect(service.analyzeFile({ uid: 'another-user', email: 'file-analysis@huerto.local' } as never, file)).rejects.toThrow('dashboard.analysis.errors.pdfOnly');
   });
 
   it('extracts key cv fields and recommendations from a pdf cv', async () => {
-    const service = new DashboardFileAnalysisService();
+    const service = createAuthorizedService();
     const file = new File(['fake pdf'], 'ana-perez-cv.pdf', { type: 'application/pdf' });
 
     jest.spyOn(service as any, 'extractPdfText').mockResolvedValue(
@@ -49,14 +55,14 @@ describe('DashboardFileAnalysisService', () => {
   });
 
   it('rejects analysis for users outside the allowlist', async () => {
-    const service = new DashboardFileAnalysisService();
+    const service = createAuthorizedService();
     const file = new File(['hello'], 'orchard-plan.pdf');
 
     await expect(service.analyzeFile(null, file)).rejects.toThrow('dashboard.analysis.errors.unauthorized');
   });
 
   it('rejects empty file names', async () => {
-    const service = new DashboardFileAnalysisService();
+    const service = createAuthorizedService();
     const file = new File(['hello'], '   ');
 
     await expect(service.analyzeFile({ uid: 'another-user', email: 'file-analysis@huerto.local' } as never, file)).rejects.toThrow('dashboard.analysis.errors.required');

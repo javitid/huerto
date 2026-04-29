@@ -1,14 +1,15 @@
-import { Component, OnInit, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, signal } from '@angular/core';
 import { Router } from '@angular/router';
-import { filter, take } from 'rxjs';
+import { combineLatest, filter, map, take } from 'rxjs';
 import { AuthService } from '../auth/auth.service';
 import { I18nService } from '../i18n/i18n.service';
 
 @Component({
-    selector: 'app-login',
-    templateUrl: './login.component.html',
-    styleUrls: ['./login.component.scss'],
-    standalone: false
+  selector: 'app-login',
+  templateUrl: './login.component.html',
+  styleUrls: ['./login.component.scss'],
+  standalone: false,
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class LoginComponent implements OnInit {
   readonly isLoading = signal(false);
@@ -22,15 +23,14 @@ export class LoginComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    this.authService.ready$.pipe(
-      filter((ready) => ready),
+    combineLatest([this.authService.user$, this.authService.ready$]).pipe(
+      filter(([, ready]) => ready),
+      map(([user]) => user),
       take(1)
-    ).subscribe(() => {
-      this.authService.user$.pipe(take(1)).subscribe((user) => {
-        if (user) {
-          this.router.navigate(['/dashboard']);
-        }
-      });
+    ).subscribe((user) => {
+      if (user) {
+        void this.router.navigate(['/dashboard']);
+      }
     });
   }
 

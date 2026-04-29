@@ -5,7 +5,7 @@
       [options]="languageOptions"
       optionLabel="shortCode"
       optionValue="code"
-      [ngModel]="selectedLanguage"
+      [ngModel]="i18n.language$ | async"
       (ngModelChange)="setLanguage($event)"
       appendTo="body"
       ariaLabel="Language selector"

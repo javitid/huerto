@@ -1,4 +1,4 @@
-import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input, OnChanges, SimpleChanges } from '@angular/core';
 import { ChartData, ChartDataset, ChartOptions, TooltipItem } from 'chart.js';
 import { DashboardTask, DashboardTaskStatus } from '../../model/dashboard.types';
 import { I18nService } from '../../../i18n/i18n.service';
@@ -17,7 +17,8 @@ interface TaskTypeChartRow {
   selector: 'app-task-type-chart',
   templateUrl: './task-type-chart.component.html',
   styleUrls: ['./task-type-chart.component.scss'],
-  standalone: false
+  standalone: false,
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class TaskTypeChartComponent implements OnChanges {
   @Input() tasks: DashboardTask[] | null = [];
@@ -102,7 +103,7 @@ export class TaskTypeChartComponent implements OnChanges {
 
     const rowsByDay = new Map<string, TaskTypeChartRow>();
     const currentDate = this.startOfDay(new Date());
-    const chartStartDate = this.getChartStartDate(currentDate);
+    const chartStartDate = this.getChartStartDate(validTasks, currentDate);
 
     for (const date of this.getDateRange(chartStartDate, currentDate)) {
       const dayKey = this.toDayKey(date);
@@ -141,8 +142,14 @@ export class TaskTypeChartComponent implements OnChanges {
     this.syncVisibleChart();
   }
 
-  private getChartStartDate(currentDate: Date): Date {
-    return new Date(currentDate.getFullYear(), 3, 12);
+  private getChartStartDate(tasks: DashboardTask[], currentDate: Date): Date {
+    const oldestTaskDate = tasks[0]?.createdAt;
+
+    if (!(oldestTaskDate instanceof Date) || Number.isNaN(oldestTaskDate.getTime())) {
+      return currentDate;
+    }
+
+    return this.startOfDay(oldestTaskDate);
   }
 
   private applyZoom(factor: number): void {

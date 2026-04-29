@@ -22,6 +22,14 @@
 - Keep `eslint.config.js` aligned with the current Angular architecture of the repo; do not enable migration-driven rules such as `prefer-standalone` or `prefer-inject` unless the codebase is intentionally moving there.
 - Use `npm run lint` as part of the normal local validation loop for app changes.
 - Use `npm run lint:fix` for safe autofixes before hand-editing style-only issues.
+- Review this audit checklist before structural changes or when using the repo as a base:
+- feature-based structure
+- clear boundary between Signals and RxJS
+- OnPush and low template recomputation where appropriate
+- no avoidable manual subscriptions or leaks
+- explicit data ownership and mutation flow
+- test coverage for business logic and critical flows
+- docs aligned with real behavior, permissions, and deployment
 
 ## Release Habit
 

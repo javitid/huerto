@@ -8,6 +8,7 @@ import { DashboardRoutingModule } from './dashboard-routing.module';
 import { TranslatePipe } from '../i18n/translate.pipe';
 import { DashboardTaskDatePipe } from './pipes/dashboard-task-date.pipe';
 import { TaskTypeChartComponent } from './components/task-type-chart/task-type-chart.component';
+import { DashboardFacade } from './page/dashboard.facade';
 
 @NgModule({
   declarations: [DashboardComponent, TaskTypeChartComponent],
@@ -19,6 +20,7 @@ import { TaskTypeChartComponent } from './components/task-type-chart/task-type-c
     TranslatePipe,
     DashboardTaskDatePipe,
     DashboardRoutingModule
-  ]
+  ],
+  providers: [DashboardFacade]
 })
 export class DashboardModule {}

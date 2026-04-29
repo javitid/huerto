@@ -78,9 +78,10 @@
           <span class="rounded-full bg-lime-400/10 px-3 py-1 text-xs font-semibold uppercase tracking-[0.2em] text-lime-300">{{ 'dashboard.summaryBadge' | t }}</span>
         </div>
 
-        @if (getVisibleTasks(dashboardData.tasks).length > 0) {
+        @let visibleTasks = getVisibleTasks(dashboardData.tasks);
+        @if (visibleTasks.length > 0) {
           <div class="space-y-3">
-            @for (task of getVisibleTasks(dashboardData.tasks); track task.id) {
+            @for (task of visibleTasks; track task.id) {
               <div
                 class="rounded-2xl border border-white/10 bg-slate-800/80 p-4"
                 [attr.data-testid]="'task-card-' + task.id"
@@ -397,7 +398,7 @@
                   <div class="rounded-3xl border border-white/10 bg-slate-950/30 p-5">
                     <p class="text-xs font-semibold uppercase tracking-[0.22em] text-sky-200">{{ 'dashboard.analysis.sections.summary' | t }}</p>
                     <div class="mt-4 grid gap-3">
-                      @for (field of getAnalysisFields('Resumen'); track field.label) {
+                      @for (field of getAnalysisFields(analysisSections.Summary); track field.label) {
                         <div class="rounded-2xl border border-white/10 bg-white/5 p-4">
                           <p class="text-xs font-semibold uppercase tracking-[0.18em] text-slate-400">{{ field.label }}</p>
                           <p class="mt-2 text-lg font-bold text-white">{{ field.value }}</p>
@@ -430,7 +431,7 @@
                   <div class="rounded-3xl border border-white/10 bg-slate-950/30 p-5">
                     <p class="text-xs font-semibold uppercase tracking-[0.22em] text-sky-200">{{ 'dashboard.analysis.sections.profile' | t }}</p>
                     <div class="mt-4 space-y-3">
-                      @for (field of getAnalysisFields('Factura'); track field.label) {
+                      @for (field of getAnalysisFields(analysisSections.Profile); track field.label) {
                         <div>
                           <p class="text-xs font-semibold uppercase tracking-[0.18em] text-slate-400">{{ field.label }}</p>
                           <p class="mt-1 text-sm font-semibold text-white">{{ field.value }}</p>
@@ -442,7 +443,7 @@
                   <div class="rounded-3xl border border-white/10 bg-slate-950/30 p-5">
                     <p class="text-xs font-semibold uppercase tracking-[0.22em] text-sky-200">{{ 'dashboard.analysis.sections.experience' | t }}</p>
                     <div class="mt-4 space-y-3">
-                      @for (field of getAnalysisFields('Contrato'); track field.label) {
+                      @for (field of getAnalysisFields(analysisSections.Experience); track field.label) {
                         <div>
                           <p class="text-xs font-semibold uppercase tracking-[0.18em] text-slate-400">{{ field.label }}</p>
                           <p class="mt-1 text-sm font-semibold text-white">{{ field.value }}</p>
@@ -454,7 +455,7 @@
                   <div class="rounded-3xl border border-white/10 bg-slate-950/30 p-5">
                     <p class="text-xs font-semibold uppercase tracking-[0.22em] text-sky-200">{{ 'dashboard.analysis.sections.education' | t }}</p>
                     <div class="mt-4 space-y-3">
-                      @for (field of getAnalysisFields('Consumo'); track field.label) {
+                      @for (field of getAnalysisFields(analysisSections.Education); track field.label) {
                         <div>
                           <p class="text-xs font-semibold uppercase tracking-[0.18em] text-slate-400">{{ field.label }}</p>
                           <p class="mt-1 text-sm font-semibold text-white">{{ field.value }}</p>
@@ -467,7 +468,7 @@
                 <div class="mt-4 rounded-3xl border border-white/10 bg-slate-950/30 p-5">
                   <p class="text-xs font-semibold uppercase tracking-[0.22em] text-sky-200">{{ 'dashboard.analysis.sections.skills' | t }}</p>
                   <div class="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
-                    @for (field of getAnalysisFields('Costes'); track field.label) {
+                    @for (field of getAnalysisFields(analysisSections.Skills); track field.label) {
                       <div class="rounded-2xl border border-white/10 bg-white/5 p-4">
                         <p class="text-xs font-semibold uppercase tracking-[0.18em] text-slate-400">{{ field.label }}</p>
                         <p class="mt-2 text-base font-bold text-white">{{ field.value }}</p>

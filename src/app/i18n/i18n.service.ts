@@ -24,6 +24,10 @@ export class I18nService {
 
   readonly language$ = this.languageSubject.asObservable();
 
+  constructor() {
+    this.syncDocumentLanguage(this.languageSubject.value);
+  }
+
   get currentLanguage(): Language {
     return this.languageSubject.value;
   }
@@ -31,6 +35,7 @@ export class I18nService {
   setLanguage(language: Language): void {
     localStorage.setItem(STORAGE_KEY, language);
     this.languageSubject.next(language);
+    this.syncDocumentLanguage(language);
   }
 
   translate(key: string): string {
@@ -46,6 +51,12 @@ export class I18nService {
     }
 
     return 'es';
+  }
+
+  private syncDocumentLanguage(language: Language): void {
+    if (typeof document !== 'undefined') {
+      document.documentElement.lang = language;
+    }
   }
 
   private readValue(table: TranslationTree, key: string): string | null {

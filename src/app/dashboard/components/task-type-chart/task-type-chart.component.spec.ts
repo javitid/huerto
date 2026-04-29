@@ -20,7 +20,7 @@ describe('TaskTypeChartComponent', () => {
     return new TaskTypeChartComponent(i18n as never);
   }
 
-  it('builds daily task counts from April 12 until today using each task creation day', () => {
+  it('builds daily task counts from the oldest task day until today using each task creation day', () => {
     const component = createComponent();
 
     component.tasks = [
@@ -57,14 +57,6 @@ describe('TaskTypeChartComponent', () => {
     });
 
     expect(component.chartData[0]).toEqual({
-      day: 'Abril 12',
-      fullDate: 'Domingo, Abril 12',
-      pendingCount: 0,
-      inProgressCount: 0,
-      doneCount: 0
-    });
-
-    expect(component.chartData.find((row) => row.day === 'Abril 20')).toEqual({
       day: 'Abril 20',
       fullDate: 'Lunes, Abril 20',
       pendingCount: 1,
@@ -88,7 +80,7 @@ describe('TaskTypeChartComponent', () => {
       doneCount: 0
     });
 
-    expect(component.chartData).toHaveLength(12);
+    expect(component.chartData).toHaveLength(4);
   });
 
   it('returns an empty chart state when no dated tasks exist', () => {

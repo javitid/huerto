@@ -10,6 +10,7 @@ describe('I18nService', () => {
 
     expect(service.currentLanguage).toBe('es');
     expect(service.translate('login.googleCta')).toBe('Entrar con Google');
+    expect(document.documentElement.lang).toBe('es');
   });
 
   it('persists the selected language and uses its translations', () => {
@@ -20,6 +21,7 @@ describe('I18nService', () => {
     expect(localStorage.getItem('huerto.language')).toBe('en');
     expect(service.currentLanguage).toBe('en');
     expect(service.translate('login.googleCta')).toBe('Continue with Google');
+    expect(document.documentElement.lang).toBe('en');
   });
 
   it('falls back to the key when the translation does not exist', () => {
